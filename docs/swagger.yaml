@@ -34,12 +34,12 @@ info:
   contact:
     email: your@mail.com
     name: API Support
-  description: This is an auto-generated API Docs for Fiber Template.
+  description: This is an auto-generated API Docs.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Fiber Template API
+  title: API
   version: "1.0"
 paths:
   /api/v1/book:

@@ -269,8 +269,8 @@ var SwaggerInfo = swaggerInfo{
 	Host:        "",
 	BasePath:    "/",
 	Schemes:     []string{},
-	Title:       "Fiber Template API",
-	Description: "This is an auto-generated API Docs for Fiber Template.",
+	Title:       "API",
+	Description: "This is an auto-generated API Docs.",
 }
 
 type s struct{}

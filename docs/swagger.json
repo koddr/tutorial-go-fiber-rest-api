@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is an auto-generated API Docs for Fiber Template.",
-        "title": "Fiber Template API",
+        "description": "This is an auto-generated API Docs.",
+        "title": "API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "API Support",

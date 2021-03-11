@@ -11,9 +11,9 @@ import (
 	_ "github.com/koddr/tutorial-go-rest-api-fiber/docs" // load API Docs files (Swagger)
 )
 
-// @title Fiber Template API
+// @title API
 // @version 1.0
-// @description This is an auto-generated API Docs for Fiber Template.
+// @description This is an auto-generated API Docs.
 // @termsOfService http://swagger.io/terms/
 // @contact.name API Support
 // @contact.email your@mail.com
