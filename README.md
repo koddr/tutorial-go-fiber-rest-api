@@ -3,7 +3,7 @@
 Fiber, PostgreSQL, JWT auth and automatically generated Swagger docs in isolated Docker containers.
 
 1. Rename `.env.example` to `.env` and fill it with your environment values.
-2. Run project by this command for run Docker containers (with Fiber and PostgreSQL, by default) and apply migrations:
+2. Run project by this command (build and run Docker containers with Fiber and PostgreSQL, and apply migrations):
 
 ```bash
 make docker.run
