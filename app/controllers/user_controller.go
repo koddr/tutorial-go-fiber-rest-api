@@ -197,7 +197,7 @@ func CreateBook(c *fiber.Ctx) error {
 // @Produce json
 // @Param id body string true "Book ID"
 // @Success 202 {object} models.Book
-// @Router /api/private/book [patch]
+// @Router /api/v1/book [patch]
 func UpdateBook(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
@@ -292,7 +292,7 @@ func UpdateBook(c *fiber.Ctx) error {
 // @Produce json
 // @Param id body string true "Book ID"
 // @Success 200 {string} string "ok"
-// @Router /api/private/book [delete]
+// @Router /api/v1/book [delete]
 func DeleteBook(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()

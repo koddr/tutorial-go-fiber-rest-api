@@ -23,7 +23,7 @@ type Book struct {
 // BookAttrs struct describe book attributes.
 type BookAttrs struct {
 	Picture     string `json:"picture"`
-	Rating      string `json:"rating"`
+	Rating      int    `json:"rating"`
 	Description string `json:"description"`
 }
 

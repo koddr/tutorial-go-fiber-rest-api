@@ -29,15 +29,19 @@ migrate.down:
 migrate.force:
 	migrate -path $(MIGRATIONS_FOLDER) -database "$(DATABASE_URL)" force $(version)
 
+docker.run: docker.network docker.postgres swag.init docker.fiber migrate.up
+
 docker.build:
 	docker build -t fiber .
 
-docker.run: docker.fiber docker.postgres
+docker.network:
+	docker network inspect dev-network >/dev/null 2>&1 || \
+	docker network create -d bridge dev-network
 
 docker.stop:
 	docker stop dev-fiber dev-postgres
 
-docker.fiber:
+docker.fiber: docker.build
 	docker run --rm -d \
 		--name dev-fiber \
 		--network dev-network \
@@ -48,7 +52,9 @@ docker.postgres:
 	docker run --rm -d \
 		--name dev-postgres \
 		--network dev-network \
+		-e POSTGRES_USER=postgres \
 		-e POSTGRES_PASSWORD=password \
+		-e POSTGRES_DB=postgres \
 		-v ${HOME}/dev-postgres/data/:/var/lib/postgresql/data \
 		-p 5432:5432 \
 		postgres

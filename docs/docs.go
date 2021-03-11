@@ -32,9 +32,9 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/private/user": {
+        "/api/v1/book": {
             "post": {
-                "description": "Create a new user.",
+                "description": "Create a new book.",
                 "consumes": [
                     "application/json"
                 ],
@@ -44,11 +44,20 @@ var doc = `{
                 "tags": [
                     "Private"
                 ],
-                "summary": "create a new user",
+                "summary": "create a new book",
                 "parameters": [
                     {
-                        "description": "E-mail",
-                        "name": "email",
+                        "description": "Title",
+                        "name": "title",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Author",
+                        "name": "author",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -57,16 +66,16 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.Book"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Delete user by given ID.",
+                "description": "Delete book by given ID.",
                 "consumes": [
                     "application/json"
                 ],
@@ -76,10 +85,10 @@ var doc = `{
                 "tags": [
                     "Private"
                 ],
-                "summary": "delete user by given ID",
+                "summary": "delete book by given ID",
                 "parameters": [
                     {
-                        "description": "User ID",
+                        "description": "Book ID",
                         "name": "id",
                         "in": "body",
                         "required": true,
@@ -98,7 +107,7 @@ var doc = `{
                 }
             },
             "patch": {
-                "description": "Update user.",
+                "description": "Update book.",
                 "consumes": [
                     "application/json"
                 ],
@@ -108,10 +117,10 @@ var doc = `{
                 "tags": [
                     "Private"
                 ],
-                "summary": "update user",
+                "summary": "update book",
                 "parameters": [
                     {
-                        "description": "User ID",
+                        "description": "Book ID",
                         "name": "id",
                         "in": "body",
                         "required": true,
@@ -121,18 +130,18 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "202": {
+                        "description": "Accepted",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.Book"
                         }
                     }
                 }
             }
         },
-        "/api/public/user/{id}": {
+        "/api/v1/book/{id}": {
             "get": {
-                "description": "Get user by given ID.",
+                "description": "Get book by given ID.",
                 "consumes": [
                     "application/json"
                 ],
@@ -142,11 +151,11 @@ var doc = `{
                 "tags": [
                     "Public"
                 ],
-                "summary": "get user by given ID",
+                "summary": "get book by given ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User ID",
+                        "description": "Book ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -156,15 +165,15 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.Book"
                         }
                     }
                 }
             }
         },
-        "/api/public/users": {
+        "/api/v1/books": {
             "get": {
-                "description": "Get all exists users.",
+                "description": "Get all exists books.",
                 "consumes": [
                     "application/json"
                 ],
@@ -174,14 +183,14 @@ var doc = `{
                 "tags": [
                     "Public"
                 ],
-                "summary": "get all exists users",
+                "summary": "get all exists books",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.User"
+                                "$ref": "#/definitions/models.Book"
                             }
                         }
                     }
@@ -190,47 +199,48 @@ var doc = `{
         }
     },
     "definitions": {
-        "models.User": {
+        "models.Book": {
             "type": "object",
             "required": [
-                "email",
-                "id"
+                "author",
+                "id",
+                "title"
             ],
             "properties": {
-                "created_at": {
+                "author": {
                     "type": "string"
                 },
-                "email": {
+                "book_attrs": {
+                    "$ref": "#/definitions/models.BookAttrs"
+                },
+                "book_status": {
+                    "type": "integer"
+                },
+                "created_at": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "updated_at": {
+                "title": {
                     "type": "string"
                 },
-                "user_attrs": {
-                    "$ref": "#/definitions/models.UserAttrs"
-                },
-                "user_status": {
-                    "type": "integer"
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
-        "models.UserAttrs": {
+        "models.BookAttrs": {
             "type": "object",
             "properties": {
-                "about": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "last_name": {
+                "description": {
                     "type": "string"
                 },
                 "picture": {
                     "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
                 }
             }
         }

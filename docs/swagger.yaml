@@ -1,33 +1,34 @@
 basePath: /
 definitions:
-  models.User:
+  models.Book:
     properties:
-      created_at:
+      author:
         type: string
-      email:
+      book_attrs:
+        $ref: '#/definitions/models.BookAttrs'
+      book_status:
+        type: integer
+      created_at:
         type: string
       id:
         type: string
+      title:
+        type: string
       updated_at:
         type: string
-      user_attrs:
-        $ref: '#/definitions/models.UserAttrs'
-      user_status:
-        type: integer
     required:
-    - email
+    - author
     - id
+    - title
     type: object
-  models.UserAttrs:
+  models.BookAttrs:
     properties:
-      about:
-        type: string
-      first_name:
-        type: string
-      last_name:
+      description:
         type: string
       picture:
         type: string
+      rating:
+        type: integer
     type: object
 info:
   contact:
@@ -41,13 +42,13 @@ info:
   title: Fiber Template API
   version: "1.0"
 paths:
-  /api/private/user:
+  /api/v1/book:
     delete:
       consumes:
       - application/json
-      description: Delete user by given ID.
+      description: Delete book by given ID.
       parameters:
-      - description: User ID
+      - description: Book ID
         in: body
         name: id
         required: true
@@ -60,15 +61,15 @@ paths:
           description: ok
           schema:
             type: string
-      summary: delete user by given ID
+      summary: delete book by given ID
       tags:
       - Private
     patch:
       consumes:
       - application/json
-      description: Update user.
+      description: Update book.
       parameters:
-      - description: User ID
+      - description: Book ID
         in: body
         name: id
         required: true
@@ -77,41 +78,47 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "202":
+          description: Accepted
           schema:
-            $ref: '#/definitions/models.User'
-      summary: update user
+            $ref: '#/definitions/models.Book'
+      summary: update book
       tags:
       - Private
     post:
       consumes:
       - application/json
-      description: Create a new user.
+      description: Create a new book.
       parameters:
-      - description: E-mail
+      - description: Title
         in: body
-        name: email
+        name: title
+        required: true
+        schema:
+          type: string
+      - description: Author
+        in: body
+        name: author
         required: true
         schema:
           type: string
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/models.User'
-      summary: create a new user
+            $ref: '#/definitions/models.Book'
+      summary: create a new book
       tags:
       - Private
-  /api/public/user/{id}:
+  /api/v1/book/{id}:
     get:
       consumes:
       - application/json
-      description: Get user by given ID.
+      description: Get book by given ID.
       parameters:
-      - description: User ID
+      - description: Book ID
         in: path
         name: id
         required: true
@@ -122,15 +129,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
-      summary: get user by given ID
+            $ref: '#/definitions/models.Book'
+      summary: get book by given ID
       tags:
       - Public
-  /api/public/users:
+  /api/v1/books:
     get:
       consumes:
       - application/json
-      description: Get all exists users.
+      description: Get all exists books.
       produces:
       - application/json
       responses:
@@ -138,9 +145,9 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.User'
+              $ref: '#/definitions/models.Book'
             type: array
-      summary: get all exists users
+      summary: get all exists books
       tags:
       - Public
 securityDefinitions:
