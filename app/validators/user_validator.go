@@ -27,8 +27,8 @@ func BookValidator() *validator.Validate {
 		return name
 	})
 
-	// Validator for user ID (UUID).
-	_ = v.RegisterValidation("id", func(fl validator.FieldLevel) bool {
+	// Validator for book ID (UUID) fields.
+	_ = v.RegisterValidation("uuid", func(fl validator.FieldLevel) bool {
 		// Define field as string.
 		field := fl.Field().String()
 
@@ -38,6 +38,15 @@ func BookValidator() *validator.Validate {
 		}
 
 		return false
+	})
+
+	// Validator for book varchar(255) fields.
+	_ = v.RegisterValidation("varchar", func(fl validator.FieldLevel) bool {
+		// Define field as string.
+		field := fl.Field().String()
+
+		// Return true, if string length > 255.
+		return len(field) <= 255
 	})
 
 	return v

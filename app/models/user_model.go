@@ -11,11 +11,11 @@ import (
 
 // Book struct describe book object.
 type Book struct {
-	ID         uuid.UUID `db:"id" json:"id" validate:"required,id"`
+	ID         uuid.UUID `db:"id" json:"id" validate:"required,uuid"`
 	CreatedAt  time.Time `db:"created_at" json:"created_at"`
 	UpdatedAt  time.Time `db:"updated_at" json:"updated_at"`
-	Title      string    `db:"title" json:"title" validate:"required"`
-	Author     string    `db:"author" json:"author" validate:"required"`
+	Title      string    `db:"title" json:"title" validate:"required,varchar"`
+	Author     string    `db:"author" json:"author" validate:"required,varchar"`
 	BookStatus int       `db:"book_status" json:"book_status"`
 	BookAttrs  BookAttrs `db:"book_attrs" json:"book_attrs"`
 }
@@ -23,8 +23,8 @@ type Book struct {
 // BookAttrs struct describe book attributes.
 type BookAttrs struct {
 	Picture     string `json:"picture"`
-	Rating      int    `json:"rating"`
 	Description string `json:"description"`
+	Rating      int    `json:"rating"`
 }
 
 // Value make the BookAttrs struct implement the driver.Valuer interface.
