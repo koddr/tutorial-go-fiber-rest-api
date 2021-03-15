@@ -6,10 +6,10 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"github.com/koddr/tutorial-go-rest-api-fiber/app/models"
-	"github.com/koddr/tutorial-go-rest-api-fiber/app/validators"
-	"github.com/koddr/tutorial-go-rest-api-fiber/pkg/utils"
-	"github.com/koddr/tutorial-go-rest-api-fiber/platform/database"
+	"github.com/koddr/tutorial-go-fiber-rest-api/app/models"
+	"github.com/koddr/tutorial-go-fiber-rest-api/app/validators"
+	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/utils"
+	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
 )
 
 // GetBooks func gets all exists books.

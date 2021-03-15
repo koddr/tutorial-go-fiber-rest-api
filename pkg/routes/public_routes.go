@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/koddr/tutorial-go-rest-api-fiber/app/controllers"
+	"github.com/koddr/tutorial-go-fiber-rest-api/app/controllers"
 )
 
 // PublicRoutes func for describe group of public routes.

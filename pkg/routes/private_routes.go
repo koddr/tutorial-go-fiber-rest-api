@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/koddr/tutorial-go-rest-api-fiber/app/controllers"
-	"github.com/koddr/tutorial-go-rest-api-fiber/pkg/middleware"
+	"github.com/koddr/tutorial-go-fiber-rest-api/app/controllers"
+	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/middleware"
 )
 
 // PrivateRoutes func for describe group of private routes.

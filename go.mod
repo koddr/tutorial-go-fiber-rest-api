@@ -1,4 +1,4 @@
-module github.com/koddr/tutorial-go-rest-api-fiber
+module github.com/koddr/tutorial-go-fiber-rest-api
 
 go 1.16
 
@@ -13,5 +13,6 @@ require (
 	github.com/jackc/pgx/v4 v4.10.1
 	github.com/jmoiron/sqlx v1.3.1
 	github.com/joho/godotenv v1.3.0
+	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.0
 )
