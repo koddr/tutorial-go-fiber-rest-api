@@ -3,18 +3,31 @@ package routes
 import (
 	"io"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
+	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPrivateRoutes(t *testing.T) {
 	// Load .env.test file from the root folder.
 	if err := godotenv.Load("../../.env.test"); err != nil {
+		panic(err)
+	}
+
+	// Create token with `book:delete` credential.
+	tokenOnlyDelete, err := utils.GenerateNewJWTAccessToken(uuid.NewString(), []string{"book:delete"})
+	if err != nil {
+		panic(err)
+	}
+
+	// Create token without any credentials.
+	tokenNoAccess, err := utils.GenerateNewJWTAccessToken(uuid.NewString(), []string{})
+	if err != nil {
 		panic(err)
 	}
 
@@ -41,7 +54,7 @@ func TestPrivateRoutes(t *testing.T) {
 			description:   "delete book without right credentials",
 			route:         "/api/v1/book",
 			method:        "DELETE",
-			tokenString:   "Bearer " + os.Getenv("FAKE_NO_ACCESS"),
+			tokenString:   "Bearer " + tokenNoAccess,
 			body:          strings.NewReader(`{"id": "808b1530-89ec-4f88-a7e7-139501d129c2"}`),
 			expectedError: false,
 			expectedCode:  403,
@@ -50,7 +63,7 @@ func TestPrivateRoutes(t *testing.T) {
 			description:   "delete book with credentials",
 			route:         "/api/v1/book",
 			method:        "DELETE",
-			tokenString:   "Bearer " + os.Getenv("FAKE_ONLY_DELETE_ACCESS"),
+			tokenString:   "Bearer " + tokenOnlyDelete,
 			body:          strings.NewReader(`{"id": "808b1530-89ec-4f88-a7e7-139501d129c2"}`),
 			expectedError: false,
 			expectedCode:  404,
