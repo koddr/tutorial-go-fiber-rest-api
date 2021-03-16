@@ -20,13 +20,19 @@ func TestPrivateRoutes(t *testing.T) {
 	}
 
 	// Create token with `book:delete` credential.
-	tokenOnlyDelete, err := utils.GenerateNewJWTAccessToken(uuid.NewString(), []string{"book:delete"})
+	tokenOnlyDelete, err := utils.GenerateNewJWTAccessToken(
+		uuid.NewString(),
+		[]string{"book:delete"},
+	)
 	if err != nil {
 		panic(err)
 	}
 
 	// Create token without any credentials.
-	tokenNoAccess, err := utils.GenerateNewJWTAccessToken(uuid.NewString(), []string{})
+	tokenNoAccess, err := utils.GenerateNewJWTAccessToken(
+		uuid.NewString(),
+		[]string{},
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -70,7 +76,7 @@ func TestPrivateRoutes(t *testing.T) {
 		},
 	}
 
-	// Define a new Fiber app with config.
+	// Define a new Fiber app.
 	app := fiber.New()
 
 	// Define routes.
