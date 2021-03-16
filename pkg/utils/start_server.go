@@ -34,3 +34,11 @@ func StartServerWithGracefulShutdown(a *fiber.App) {
 
 	<-idleConnsClosed
 }
+
+// StartServer func for starting a simple server.
+func StartServer(a *fiber.App) {
+	// Run server.
+	if err := a.Listen(os.Getenv("SERVER_URL")); err != nil {
+		log.Printf("Oops... Server is not running! Reason: %v", err)
+	}
+}

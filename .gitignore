@@ -7,7 +7,6 @@ tmp/
 
 # Test
 *.out
-*.test
 
 # Environment variables
 .env

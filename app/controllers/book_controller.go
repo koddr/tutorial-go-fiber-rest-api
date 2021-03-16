@@ -3,7 +3,6 @@ package controllers
 import (
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/koddr/tutorial-go-fiber-rest-api/app/models"
@@ -112,15 +111,21 @@ func CreateBook(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
 
-	// Get data from JWT.
-	token := c.Locals("jwt").(*jwt.Token)
-	claims := token.Claims.(jwt.MapClaims)
+	// Get claims from JWT.
+	claims, err := utils.ExtractTokenMetadata(c)
+	if err != nil {
+		// Return status 500 and JWT parse error.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
 
 	// Set expiration time from JWT data of current book.
-	expires := claims["expires"].(int64)
+	expires := claims.Expires
 
-	// Set credential `book:create` from JWT data of current book.
-	credential := claims["book:create"].(bool)
+	// Set credential `book:delete` from JWT data of current book.
+	credential := claims.Credentials["book:create"]
 
 	// Create a new book struct.
 	book := &models.Book{}
@@ -136,7 +141,7 @@ func CreateBook(c *fiber.Ctx) error {
 
 	// Only book with `book:create` credential can create a new book.
 	if credential && now < expires {
-		// Create a new validator for book model.
+		// Create a new validator for a book model.
 		validate := validators.BookValidator()
 
 		// Validate book fields.
@@ -202,15 +207,21 @@ func UpdateBook(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
 
-	// Get data from JWT.
-	token := c.Locals("jwt").(*jwt.Token)
-	claims := token.Claims.(jwt.MapClaims)
+	// Get claims from JWT.
+	claims, err := utils.ExtractTokenMetadata(c)
+	if err != nil {
+		// Return status 500 and JWT parse error.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
 
 	// Set expiration time from JWT data of current book.
-	expires := claims["expires"].(int64)
+	expires := claims.Expires
 
-	// Set credential `book:update` from JWT data of current book.
-	credential := claims["book:update"].(bool)
+	// Set credential `book:delete` from JWT data of current book.
+	credential := claims.Credentials["book:update"]
 
 	// Create a new book struct.
 	book := &models.Book{}
@@ -224,28 +235,9 @@ func UpdateBook(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create database connection.
-	db, err := database.OpenDBConnection()
-	if err != nil {
-		// Return status 500 and database connection error.
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
-	}
-
-	// Checking, if book with given ID is exists.
-	if _, err := db.GetBook(book.ID); err != nil {
-		// Return status 404 and book not found error.
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": true,
-			"msg":   "book not found",
-		})
-	}
-
 	// Only book with `book:update` credential can update book profile.
 	if credential && now < expires {
-		// Create a new validator for book model.
+		// Create a new validator for a book model.
 		validate := validators.BookValidator()
 
 		// Validate book fields.
@@ -254,6 +246,25 @@ func UpdateBook(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": true,
 				"msg":   utils.ValidatorErrors(err),
+			})
+		}
+
+		// Create database connection.
+		db, err := database.OpenDBConnection()
+		if err != nil {
+			// Return status 500 and database connection error.
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   err.Error(),
+			})
+		}
+
+		// Checking, if book with given ID is exists.
+		if _, err := db.GetBook(book.ID); err != nil {
+			// Return status 404 and book not found error.
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": true,
+				"msg":   "book not found",
 			})
 		}
 
@@ -297,15 +308,21 @@ func DeleteBook(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
 
-	// Get data from JWT.
-	token := c.Locals("jwt").(*jwt.Token)
-	claims := token.Claims.(jwt.MapClaims)
+	// Get claims from JWT.
+	claims, err := utils.ExtractTokenMetadata(c)
+	if err != nil {
+		// Return status 500 and JWT parse error.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
 
 	// Set expiration time from JWT data of current book.
-	expires := claims["expires"].(int64)
+	expires := claims.Expires
 
 	// Set credential `book:delete` from JWT data of current book.
-	credential := claims["book:delete"].(bool)
+	credential := claims.Credentials["book:delete"]
 
 	// Create new Book struct
 	book := &models.Book{}
@@ -319,27 +336,27 @@ func DeleteBook(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create database connection.
-	db, err := database.OpenDBConnection()
-	if err != nil {
-		// Return status 500 and database connection error.
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
-	}
-
-	// Checking, if book with given ID is exists.
-	if _, err := db.GetBook(book.ID); err != nil {
-		// Return status 404 and book not found error.
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": true,
-			"msg":   "book not found",
-		})
-	}
-
 	// Only book with `book:delete` credential can delete book profile.
 	if credential && now < expires {
+		// Create database connection.
+		db, err := database.OpenDBConnection()
+		if err != nil {
+			// Return status 500 and database connection error.
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   err.Error(),
+			})
+		}
+
+		// Checking, if book with given ID is exists.
+		if _, err := db.GetBook(book.ID); err != nil {
+			// Return status 404 and book not found error.
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": true,
+				"msg":   "book not found",
+			})
+		}
+
 		// Delete book by given ID.
 		if err := db.DeleteBook(book.ID); err != nil {
 			// Return status 500 and delete book process error.
@@ -350,11 +367,10 @@ func DeleteBook(c *fiber.Ctx) error {
 		}
 	} else {
 		// Return status 403 and permission denied error.
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": true,
 			"msg":   "permission denied, check credentials or expiration time of your token",
 		})
-
 	}
 
 	return c.JSON(fiber.Map{

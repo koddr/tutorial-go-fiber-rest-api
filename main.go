@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/koddr/tutorial-go-rest-api-fiber/pkg/configs"
-	"github.com/koddr/tutorial-go-rest-api-fiber/pkg/middleware"
-	"github.com/koddr/tutorial-go-rest-api-fiber/pkg/routes"
-	"github.com/koddr/tutorial-go-rest-api-fiber/pkg/utils"
+	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/configs"
+	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/middleware"
+	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/routes"
+	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/utils"
 
 	_ "github.com/joho/godotenv/autoload"                // load .env file automatically
-	_ "github.com/koddr/tutorial-go-rest-api-fiber/docs" // load API Docs files (Swagger)
+	_ "github.com/koddr/tutorial-go-fiber-rest-api/docs" // load API Docs files (Swagger)
 )
 
 // @title API
@@ -34,7 +34,8 @@ func main() {
 	middleware.FiberMiddleware(app) // Register Fiber's middleware for app.
 
 	// Routes.
-	routes.SwaggerRoute(app)  // Register a route for API Docs (Swagger).
+	routes.SwaggerRoute(app) // Register a route for API Docs (Swagger).
+	routes.JWTRoutes(app)
 	routes.PublicRoutes(app)  // Register a public routes for app.
 	routes.PrivateRoutes(app) // Register a private routes for app.
 	routes.NotFoundRoute(app) // Register route for 404 Error.

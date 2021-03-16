@@ -14,6 +14,10 @@ security:
 test: security
 	go test -cover ./...
 
+test.db:
+	go test -v -timeout 30s -coverprofile=cover.out -cover ./...
+	go tool cover -func=cover.out
+
 build: clean test
 	CGO_ENABLED=0 go build -ldflags="-w -s" -o $(BUILD_DIR)/$(APP_NAME) main.go
 
@@ -38,9 +42,6 @@ docker.network:
 	docker network inspect dev-network >/dev/null 2>&1 || \
 	docker network create -d bridge dev-network
 
-docker.stop:
-	docker stop dev-fiber dev-postgres
-
 docker.fiber: docker.build
 	docker run --rm -d \
 		--name dev-fiber \
@@ -58,6 +59,14 @@ docker.postgres:
 		-v ${HOME}/dev-postgres/data/:/var/lib/postgresql/data \
 		-p 5432:5432 \
 		postgres
+
+docker.stop: docker.stop.fiber docker.stop.postgres
+
+docker.stop.fiber:
+	docker stop dev-fiber
+
+docker.stop.postgres:
+	docker stop dev-postgres
 
 swag.init:
 	swag init

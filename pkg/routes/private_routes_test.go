@@ -2,54 +2,58 @@ package routes
 
 import (
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPublicRoutes(t *testing.T) {
-	// Define a structure for specifying input and output
-	// data of a single test case. This structure is then used
-	// to create a so called test map, which contains all test
-	// cases, that should be run for testing this function
+func TestPrivateRoutes(t *testing.T) {
+	// Define a structure for specifying input and output data of a single test case.
 	tests := []struct {
 		description   string
 		route         string // input route
+		method        string // input method
+		credentials   string // input credentials
 		expectedError bool
 		expectedCode  int
 	}{
 		{
-			description:   "get book by ID",
-			route:         "/api/v1/book/" + uuid.New().String(),
+			description:   "delete book without credentials",
+			route:         "/api/v1/book",
+			method:        "DELETE",
+			credentials:   "",
+			expectedError: false,
+			expectedCode:  401,
+		},
+		{
+			description:   "delete book with credentials",
+			route:         "/api/v1/book",
+			method:        "DELETE",
+			credentials:   "Bearer " + os.Getenv("JWT_TOKEN_ONLY_DELETE"),
 			expectedError: false,
 			expectedCode:  404,
 		},
-		{
-			description:   "get book by invalid ID (non UUID)",
-			route:         "/api/v1/book/123456",
-			expectedError: false,
-			expectedCode:  500,
-		},
 	}
 
-	// Load .env.test file from the root folder
-	if err := godotenv.Load("../../.env"); err != nil {
+	// Load .env.test file from the root folder.
+	if err := godotenv.Load("../../.env.test"); err != nil {
 		panic(err)
 	}
 
-	// Define Fiber app.
+	// Define a new Fiber app with config.
 	app := fiber.New()
 
 	// Define routes.
-	PublicRoutes(app)
+	PrivateRoutes(app)
 
 	// Iterate through test single test cases
 	for _, test := range tests {
 		// Create a new http request with the route from the test case.
-		req := httptest.NewRequest("GET", test.route, nil)
+		req := httptest.NewRequest(test.method, test.route, nil)
+		req.Header.Set("Authorization", test.credentials)
 		req.Header.Set("Content-Type", "application/json")
 
 		// Perform the request plain with the app.
