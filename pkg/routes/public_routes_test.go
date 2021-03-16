@@ -11,10 +11,12 @@ import (
 )
 
 func TestPublicRoutes(t *testing.T) {
-	// Define a structure for specifying input and output
-	// data of a single test case. This structure is then used
-	// to create a so called test map, which contains all test
-	// cases, that should be run for testing this function
+	// Load .env.test file from the root folder
+	if err := godotenv.Load("../../.env.test"); err != nil {
+		panic(err)
+	}
+
+	// Define a structure for specifying input and output data of a single test case.
 	tests := []struct {
 		description   string
 		route         string // input route
@@ -33,11 +35,6 @@ func TestPublicRoutes(t *testing.T) {
 			expectedError: false,
 			expectedCode:  500,
 		},
-	}
-
-	// Load .env.test file from the root folder
-	if err := godotenv.Load("../../.env"); err != nil {
-		panic(err)
 	}
 
 	// Define Fiber app.

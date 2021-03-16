@@ -124,7 +124,7 @@ func CreateBook(c *fiber.Ctx) error {
 	// Set expiration time from JWT data of current book.
 	expires := claims.Expires
 
-	// Set credential `book:delete` from JWT data of current book.
+	// Set credential `book:create` from JWT data of current book.
 	credential := claims.Credentials["book:create"]
 
 	// Create a new book struct.
@@ -220,7 +220,7 @@ func UpdateBook(c *fiber.Ctx) error {
 	// Set expiration time from JWT data of current book.
 	expires := claims.Expires
 
-	// Set credential `book:delete` from JWT data of current book.
+	// Set credential `book:update` from JWT data of current book.
 	credential := claims.Credentials["book:update"]
 
 	// Create a new book struct.
