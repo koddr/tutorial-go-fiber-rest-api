@@ -15,7 +15,9 @@ make docker.run
 #   - Apply database migrations (by github.com/golang-migrate/migrate)
 ```
 
-3. Go to API Docs page (Swagger): [localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html).
+3. Go to API Docs page (Swagger): [localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html)
+
+![Screenshot 2021-03-16 at 16 28 09](https://user-images.githubusercontent.com/11155743/111316852-ace5c600-8674-11eb-8936-e1d88c58a6fa.png)
 
 ## ⚠️ License
 
