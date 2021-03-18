@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Book struct describe book object.
+// Book struct to describe book object.
 type Book struct {
 	ID         uuid.UUID `db:"id" json:"id" validate:"required,uuid"`
 	CreatedAt  time.Time `db:"created_at" json:"created_at"`
@@ -20,7 +20,7 @@ type Book struct {
 	BookAttrs  BookAttrs `db:"book_attrs" json:"book_attrs"`
 }
 
-// BookAttrs struct describe book attributes.
+// BookAttrs struct to describe book attributes.
 type BookAttrs struct {
 	Picture     string `json:"picture"`
 	Description string `json:"description"`
@@ -29,17 +29,17 @@ type BookAttrs struct {
 
 // Value make the BookAttrs struct implement the driver.Valuer interface.
 // This method simply returns the JSON-encoded representation of the struct.
-func (u BookAttrs) Value() (driver.Value, error) {
-	return json.Marshal(u)
+func (b BookAttrs) Value() (driver.Value, error) {
+	return json.Marshal(b)
 }
 
 // Scan make the BookAttrs struct implement the sql.Scanner interface.
 // This method simply decodes a JSON-encoded value into the struct fields.
-func (u *BookAttrs) Scan(value interface{}) error {
-	b, ok := value.([]byte)
+func (b *BookAttrs) Scan(value interface{}) error {
+	j, ok := value.([]byte)
 	if !ok {
 		return errors.New("type assertion to []byte failed")
 	}
 
-	return json.Unmarshal(b, &u)
+	return json.Unmarshal(j, &b)
 }
