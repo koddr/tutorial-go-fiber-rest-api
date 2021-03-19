@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -8,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/koddr/tutorial-go-fiber-rest-api/app/models"
 	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/utils"
+	"github.com/koddr/tutorial-go-fiber-rest-api/platform/cache"
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
 )
 
@@ -71,6 +73,22 @@ func UserLogin(c *fiber.Ctx) error {
 	refreshToken, err := utils.GenerateNewJWTRefreshToken()
 	if err != nil {
 		// Return status 500 and token generation error.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Define context.
+	ctx := context.Background()
+
+	// Define user ID.
+	userID := foundedUser.ID.String()
+
+	// Save refresh token to Redis.
+	errRedis := cache.RedisConnection().Set(ctx, userID, refreshToken, 0).Err()
+	if errRedis != nil {
+		// Return status 500 and Redis connection error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
