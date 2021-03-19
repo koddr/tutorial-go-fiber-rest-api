@@ -21,7 +21,7 @@ func PostgreSQLConnection() (*sqlx.DB, error) {
 	// Define database connection for PostgreSQL.
 	db, err := sqlx.Connect("pgx", os.Getenv("DB_SERVER_URL"))
 	if err != nil {
-		return nil, fmt.Errorf("error, not connected to PostgreSQL database, %w", err)
+		return nil, fmt.Errorf("error, not connected to database, %w", err)
 	}
 
 	// Set database connection settings.
@@ -32,7 +32,7 @@ func PostgreSQLConnection() (*sqlx.DB, error) {
 	// Try to ping database.
 	if err := db.Ping(); err != nil {
 		defer db.Close() // close database connection
-		return nil, fmt.Errorf("error, not sent ping to PostgreSQL database, %w", err)
+		return nil, fmt.Errorf("error, not sent ping to database, %w", err)
 	}
 
 	return db, nil

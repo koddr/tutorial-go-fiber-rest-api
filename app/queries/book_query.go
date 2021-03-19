@@ -22,9 +22,11 @@ func (q *BookQueries) GetBooks() ([]models.Book, error) {
 	// Send query to database.
 	err := q.Get(&books, query)
 	if err != nil {
+		// Return empty object and error.
 		return books, err
 	}
 
+	// Return query result.
 	return books, nil
 }
 
@@ -39,9 +41,11 @@ func (q *BookQueries) GetBooksByAuthor(author string) ([]models.Book, error) {
 	// Send query to database.
 	err := q.Get(&books, query, author)
 	if err != nil {
+		// Return empty object and error.
 		return books, err
 	}
 
+	// Return query result.
 	return books, nil
 }
 
@@ -56,37 +60,43 @@ func (q *BookQueries) GetBook(id uuid.UUID) (models.Book, error) {
 	// Send query to database.
 	err := q.Get(&book, query, id)
 	if err != nil {
+		// Return empty object and error.
 		return book, err
 	}
 
+	// Return query result.
 	return book, nil
 }
 
 // CreateBook method for creating book by given Book object.
-func (q *BookQueries) CreateBook(u *models.Book) error {
+func (q *BookQueries) CreateBook(b *models.Book) error {
 	// Define query string.
-	query := `INSERT INTO books VALUES ($1, $2, $3, $4, $5, $6, $7)`
+	query := `INSERT INTO books VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 
 	// Send query to database.
-	_, err := q.Exec(query, u.ID, u.CreatedAt, u.UpdatedAt, u.Title, u.Author, u.BookStatus, u.BookAttrs)
+	_, err := q.Exec(query, b.ID, b.CreatedAt, b.UpdatedAt, b.UserID, b.Title, b.Author, b.BookStatus, b.BookAttrs)
 	if err != nil {
+		// Return only error.
 		return err
 	}
 
+	// This query returns nothing.
 	return nil
 }
 
 // UpdateBook method for updating book by given Book object.
-func (q *BookQueries) UpdateBook(u *models.Book) error {
+func (q *BookQueries) UpdateBook(b *models.Book) error {
 	// Define query string.
 	query := `UPDATE books SET updated_at = $2, title = $3, author = $4, book_attrs = $5 WHERE id = $1`
 
 	// Send query to database.
-	_, err := q.Exec(query, u.ID, u.UpdatedAt, u.Title, u.Author, u.BookAttrs)
+	_, err := q.Exec(query, b.ID, b.UpdatedAt, b.Title, b.Author, b.BookAttrs)
 	if err != nil {
+		// Return only error.
 		return err
 	}
 
+	// This query returns nothing.
 	return nil
 }
 
@@ -98,8 +108,10 @@ func (q *BookQueries) DeleteBook(id uuid.UUID) error {
 	// Send query to database.
 	_, err := q.Exec(query, id)
 	if err != nil {
+		// Return only error.
 		return err
 	}
 
+	// This query returns nothing.
 	return nil
 }

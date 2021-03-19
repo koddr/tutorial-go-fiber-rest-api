@@ -3,10 +3,10 @@ package controllers
 import (
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/koddr/tutorial-go-fiber-rest-api/app/models"
-	"github.com/koddr/tutorial-go-fiber-rest-api/app/validators"
 	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/utils"
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
 )
@@ -121,6 +121,9 @@ func CreateBook(c *fiber.Ctx) error {
 		})
 	}
 
+	// Set user ID from JWT data of current user.
+	userID := claims.UserID
+
 	// Set expiration time from JWT data of current book.
 	expires := claims.Expires
 
@@ -139,10 +142,10 @@ func CreateBook(c *fiber.Ctx) error {
 		})
 	}
 
-	// Only book with `book:create` credential can create a new book.
+	// Only user with `book:create` credential can create a new book.
 	if credential && now < expires {
-		// Create a new validator for a book model.
-		validate := validators.BookValidator()
+		// Create a new validator for a Book model.
+		validate := validator.New()
 
 		// Validate book fields.
 		if err := validate.Struct(book); err != nil {
@@ -167,6 +170,7 @@ func CreateBook(c *fiber.Ctx) error {
 		book.ID = uuid.New()
 		book.CreatedAt = time.Now()
 		book.UpdatedAt = time.Time{}
+		book.UserID = userID
 		book.BookStatus = 1 // 0 == draft, 1 == active
 		book.BookAttrs = models.BookAttrs{}
 
@@ -217,6 +221,9 @@ func UpdateBook(c *fiber.Ctx) error {
 		})
 	}
 
+	// Set user ID from JWT data of current user.
+	userID := claims.UserID
+
 	// Set expiration time from JWT data of current book.
 	expires := claims.Expires
 
@@ -235,10 +242,10 @@ func UpdateBook(c *fiber.Ctx) error {
 		})
 	}
 
-	// Only book with `book:update` credential can update book profile.
-	if credential && now < expires {
+	// Only creator with `book:update` credential can update book info.
+	if credential && now < expires && book.UserID == userID {
 		// Create a new validator for a book model.
-		validate := validators.BookValidator()
+		validate := validator.New()
 
 		// Validate book fields.
 		if err := validate.Struct(book); err != nil {
@@ -318,6 +325,9 @@ func DeleteBook(c *fiber.Ctx) error {
 		})
 	}
 
+	// Set user ID from JWT data of current user.
+	userID := claims.UserID
+
 	// Set expiration time from JWT data of current book.
 	expires := claims.Expires
 
@@ -336,8 +346,20 @@ func DeleteBook(c *fiber.Ctx) error {
 		})
 	}
 
-	// Only book with `book:delete` credential can delete book profile.
-	if credential && now < expires {
+	// Only book creator with `book:delete` credential can delete book.
+	if credential && now < expires && book.UserID == userID {
+		// Create a new validator for a book model.
+		validate := validator.New()
+
+		// Validate book fields.
+		if err := validate.Struct(book); err != nil {
+			// Return, if some fields are not valid.
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   utils.ValidatorErrors(err),
+			})
+		}
+
 		// Create database connection.
 		db, err := database.OpenDBConnection()
 		if err != nil {

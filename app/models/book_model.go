@@ -11,11 +11,12 @@ import (
 
 // Book struct to describe book object.
 type Book struct {
-	ID         uuid.UUID `db:"id" json:"id" validate:"required,uuid"`
+	ID         uuid.UUID `db:"id" json:"id" validate:"required,uuid4"`
 	CreatedAt  time.Time `db:"created_at" json:"created_at"`
 	UpdatedAt  time.Time `db:"updated_at" json:"updated_at"`
-	Title      string    `db:"title" json:"title" validate:"required,varchar"`
-	Author     string    `db:"author" json:"author" validate:"required,varchar"`
+	UserID     uuid.UUID `db:"user_id" json:"user_id" validate:"required,uuid4"`
+	Title      string    `db:"title" json:"title" validate:"required,lte=255"`
+	Author     string    `db:"author" json:"author" validate:"required,lte=255"`
 	BookStatus int       `db:"book_status" json:"book_status"`
 	BookAttrs  BookAttrs `db:"book_attrs" json:"book_attrs"`
 }
