@@ -16,10 +16,13 @@ definitions:
         type: string
       updated_at:
         type: string
+      user_id:
+        type: string
     required:
     - author
     - id
     - title
+    - user_id
     type: object
   models.BookAttrs:
     properties:
@@ -29,6 +32,25 @@ definitions:
         type: string
       rating:
         type: integer
+    type: object
+  models.User:
+    properties:
+      User_status:
+        type: integer
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      password_hash:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - email
+    - id
+    - password_hash
     type: object
 info:
   contact:
@@ -148,6 +170,62 @@ paths:
               $ref: '#/definitions/models.Book'
             type: array
       summary: get all exists books
+      tags:
+      - Public
+  /api/v1/user/login:
+    post:
+      consumes:
+      - application/json
+      description: Auth user and return JWT.
+      parameters:
+      - description: User Email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: User Password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: auth user and return JWT
+      tags:
+      - Public
+  /api/v1/user/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user.
+      parameters:
+      - description: Email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: Password Hash
+        in: body
+        name: password_hash
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: create a new user
       tags:
       - Public
 securityDefinitions:

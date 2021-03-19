@@ -169,7 +169,6 @@ func CreateBook(c *fiber.Ctx) error {
 		// Set initialized default data for book:
 		book.ID = uuid.New()
 		book.CreatedAt = time.Now()
-		book.UpdatedAt = time.Time{}
 		book.UserID = userID
 		book.BookStatus = 1 // 0 == draft, 1 == active
 		book.BookAttrs = models.BookAttrs{}

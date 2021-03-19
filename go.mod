@@ -15,4 +15,5 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.0
+	golang.org/x/crypto v0.0.0-20210317152858-513c2a44f670
 )

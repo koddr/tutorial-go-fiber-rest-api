@@ -33,7 +33,7 @@ migrate.down:
 migrate.force:
 	migrate -path $(MIGRATIONS_FOLDER) -database "$(DATABASE_URL)" force $(version)
 
-docker.run: docker.network docker.postgres swag.init docker.fiber migrate.up
+docker.run: docker.network docker.postgres swag.init docker.fiber docker.redis migrate.up
 
 docker.build:
 	docker build -t fiber .
@@ -60,13 +60,23 @@ docker.postgres:
 		-p 5432:5432 \
 		postgres
 
-docker.stop: docker.stop.fiber docker.stop.postgres
+docker.redis:
+	docker run --rm -d \
+		--name dev-redis \
+		--network dev-network \
+		-p 6379:6379 \
+		redis
+
+docker.stop: docker.stop.fiber docker.stop.postgres docker.stop.redis
 
 docker.stop.fiber:
 	docker stop dev-fiber
 
 docker.stop.postgres:
 	docker stop dev-postgres
+
+docker.stop.redis:
+	docker stop dev-redis
 
 swag.init:
 	swag init

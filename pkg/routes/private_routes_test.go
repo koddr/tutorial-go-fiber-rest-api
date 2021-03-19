@@ -19,6 +19,9 @@ func TestPrivateRoutes(t *testing.T) {
 		panic(err)
 	}
 
+	// Create a sample data string.
+	dataString := `{"id": "00000000-0000-0000-0000-000000000000"}`
+
 	// Create token with `book:delete` credential.
 	tokenOnlyDelete, err := utils.GenerateNewJWTAccessToken(
 		uuid.NewString(),
@@ -61,7 +64,7 @@ func TestPrivateRoutes(t *testing.T) {
 			route:         "/api/v1/book",
 			method:        "DELETE",
 			tokenString:   "Bearer " + tokenNoAccess,
-			body:          strings.NewReader(`{"id": "00000000-0000-0000-0000-000000000000"}`),
+			body:          strings.NewReader(dataString),
 			expectedError: false,
 			expectedCode:  403,
 		},
@@ -70,7 +73,7 @@ func TestPrivateRoutes(t *testing.T) {
 			route:         "/api/v1/book",
 			method:        "DELETE",
 			tokenString:   "Bearer " + tokenOnlyDelete,
-			body:          strings.NewReader(`{"id": "00000000-0000-0000-0000-000000000000"}`),
+			body:          strings.NewReader(dataString),
 			expectedError: false,
 			expectedCode:  404,
 		},
