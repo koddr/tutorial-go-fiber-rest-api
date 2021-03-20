@@ -295,10 +295,17 @@ func UpdateBook(c *fiber.Ctx) error {
 		// Create a new validator for a Book model.
 		validate := validator.New()
 
+		// Custom validation for uuid.UUID fields.
+		_ = validate.RegisterValidation("uuid", func(fl validator.FieldLevel) bool {
+			field := fl.Field().String()
+			if _, err := uuid.Parse(field); err != nil {
+				return true
+			}
+			return false
+		})
+
 		// Validate book fields.
-		if err := validate.StructPartial(
-			book, "id", "title", "author", "book_status", "book_attrs",
-		); err != nil {
+		if err := validate.Struct(book); err != nil {
 			// Return, if some fields are not valid.
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"error": true,
@@ -315,7 +322,7 @@ func UpdateBook(c *fiber.Ctx) error {
 			})
 		}
 
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
 			"error": false,
 			"msg":   nil,
 		})
