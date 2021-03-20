@@ -15,7 +15,7 @@ func PublicRoutes(a *fiber.App) {
 	route.Get("/book/:id", controllers.GetBook) // get one book by ID
 
 	// Routes for POST method:
-	route.Post("/user/login", controllers.UserLogin)     // auth user and return JWT
+	route.Post("/user/sign-in", controllers.UserSignIn)  // auth, return Access & Refresh tokens
 	route.Post("/user/register", controllers.CreateUser) // register a new user
 
 	// Route for generate JWT token.

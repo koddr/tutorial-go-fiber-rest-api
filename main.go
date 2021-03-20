@@ -40,5 +40,5 @@ func main() {
 	routes.NotFoundRoute(app) // Register route for 404 Error.
 
 	// Start server (with graceful shutdown).
-	utils.StartServerWithGracefulShutdown(app)
+	utils.StartServer(app)
 }
