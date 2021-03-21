@@ -11,7 +11,7 @@ make docker.run
 # Process:
 #   - Generate API docs
 #   - Create a new Docker network
-#   - Build and run Docker containers (Fiber, PostgreSQL)
+#   - Build and run Docker containers (Fiber, Redis, PostgreSQL)
 #   - Apply database migrations (by github.com/golang-migrate/migrate)
 ```
 
