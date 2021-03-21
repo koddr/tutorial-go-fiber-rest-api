@@ -35,14 +35,14 @@ migrate.force:
 
 docker.run: docker.network docker.postgres swag.init docker.fiber docker.redis migrate.up
 
-docker.build:
-	docker build -t fiber .
-
 docker.network:
 	docker network inspect dev-network >/dev/null 2>&1 || \
 	docker network create -d bridge dev-network
 
-docker.fiber: docker.build
+docker.fiber.build:
+	docker build -t fiber .
+
+docker.fiber: docker.fiber.build
 	docker run --rm -d \
 		--name dev-fiber \
 		--network dev-network \
