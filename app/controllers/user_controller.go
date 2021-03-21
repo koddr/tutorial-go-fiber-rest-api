@@ -12,11 +12,6 @@ import (
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
 )
 
-var (
-	// Define context.
-	ctx = context.Background()
-)
-
 // UserSignUp func for create a new user.
 // @Description Create a new user.
 // @Summary create a new user
@@ -179,8 +174,11 @@ func UserSignIn(c *fiber.Ctx) error {
 	// Define user ID.
 	userID := foundedUser.ID.String()
 
+	// Create a new Redis connection.
+	connRedis := cache.RedisConnection()
+
 	// Save refresh token to Redis.
-	errRedis := cache.RedisConnection().Set(ctx, userID, tokens.Refresh, 0).Err()
+	errRedis := connRedis.Set(context.Background(), userID, tokens.Refresh, 0).Err()
 	if errRedis != nil {
 		// Return status 500 and Redis connection error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -223,8 +221,11 @@ func UserSignOut(c *fiber.Ctx) error {
 	// Define user ID.
 	userID := claims.UserID.String()
 
+	// Create a new Redis connection.
+	connRedis := cache.RedisConnection()
+
 	// Save refresh token to Redis.
-	errRedis := cache.RedisConnection().Del(ctx, userID).Err()
+	errRedis := connRedis.Del(context.Background(), userID).Err()
 	if errRedis != nil {
 		// Return status 500 and Redis connection error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

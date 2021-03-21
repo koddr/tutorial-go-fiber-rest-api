@@ -5,15 +5,11 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/koddr/tutorial-go-fiber-rest-api/app/models"
 	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/utils"
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/cache"
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
 )
-
-// Renew struct to describe refresh token object.
-type Renew struct {
-	RefreshToken string `json:"refresh_token"`
-}
 
 // RenewTokens method for renew an Access & Refresh tokens.
 // @Description Renew an Access & Refresh tokens.
@@ -52,7 +48,7 @@ func RenewTokens(c *fiber.Ctx) error {
 	}
 
 	// Create a new renew refresh token struct.
-	renew := &Renew{}
+	renew := &models.Renew{}
 
 	// Checking received data from JSON body.
 	if err := c.BodyParser(renew); err != nil {
@@ -118,11 +114,11 @@ func RenewTokens(c *fiber.Ctx) error {
 			})
 		}
 
-		// Define context.
-		ctx := context.Background()
+		// Create a new Redis connection.
+		connRedis := cache.RedisConnection()
 
 		// Save refresh token to Redis.
-		errRedis := cache.RedisConnection().Set(ctx, userID.String(), tokens.Refresh, 0).Err()
+		errRedis := connRedis.Set(context.Background(), userID.String(), tokens.Refresh, 0).Err()
 		if errRedis != nil {
 			// Return status 500 and Redis connection error.
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
