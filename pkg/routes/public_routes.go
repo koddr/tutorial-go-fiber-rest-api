@@ -15,19 +15,6 @@ func PublicRoutes(a *fiber.App) {
 	route.Get("/book/:id", controllers.GetBook) // get one book by ID
 
 	// Routes for POST method:
-	route.Post("/user/sign-in", controllers.UserSignIn)  // auth, return Access & Refresh tokens
-	route.Post("/user/register", controllers.CreateUser) // register a new user
-
-	// Route for generate JWT token.
-	// route.Get("/token", func(c *fiber.Ctx) error {
-	// 	credentials := []string{"book:delete"}
-	// 	token, err := utils.GenerateNewJWTAccessToken(uuid.NewString(), credentials)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	return c.JSON(fiber.Map{
-	// 		"error": false,
-	// 		"msg":   token,
-	// 	})
-	// })
+	route.Post("/user/sign/up", controllers.UserSignUp) // register a new user
+	route.Post("/user/sign/in", controllers.UserSignIn) // auth, return Access & Refresh tokens
 }

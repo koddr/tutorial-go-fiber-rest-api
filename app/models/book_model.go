@@ -17,15 +17,15 @@ type Book struct {
 	UserID     uuid.UUID `db:"user_id" json:"user_id" validate:"required,uuid"`
 	Title      string    `db:"title" json:"title" validate:"required,lte=255"`
 	Author     string    `db:"author" json:"author" validate:"required,lte=255"`
-	BookStatus int       `db:"book_status" json:"book_status"`
-	BookAttrs  BookAttrs `db:"book_attrs" json:"book_attrs"`
+	BookStatus int       `db:"book_status" json:"book_status" validate:"required,len=1"`
+	BookAttrs  BookAttrs `db:"book_attrs" json:"book_attrs" validate:"dive"`
 }
 
 // BookAttrs struct to describe book attributes.
 type BookAttrs struct {
 	Picture     string `json:"picture"`
 	Description string `json:"description"`
-	Rating      int    `json:"rating"`
+	Rating      int    `json:"rating" validate:"min=1,max=10"`
 }
 
 // Value make the BookAttrs struct implement the driver.Valuer interface.

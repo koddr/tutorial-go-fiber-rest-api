@@ -13,7 +13,8 @@ CREATE TABLE users (
     updated_at TIMESTAMP NULL,
     email VARCHAR (255) NOT NULL UNIQUE,
     password_hash VARCHAR (255) NOT NULL,
-    user_status INT NOT NULL
+    user_status INT NOT NULL,
+    user_role VARCHAR (255) NOT NULL
 );
 
 -- Create books table

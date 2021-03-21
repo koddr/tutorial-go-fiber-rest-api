@@ -18,8 +18,8 @@ type Tokens struct {
 	Refresh string
 }
 
-// GenerateNewAccessAndRefreshTokens func for generate a new Access & Refresh tokens.
-func GenerateNewAccessAndRefreshTokens(id string, credentials []string) (*Tokens, error) {
+// GenerateNewTokens func for generate a new Access & Refresh tokens.
+func GenerateNewTokens(id string, credentials []string) (*Tokens, error) {
 	// Generate JWT Access token.
 	accessToken, err := generateNewAccessToken(id, credentials)
 	if err != nil {

@@ -23,7 +23,7 @@ func TestPrivateRoutes(t *testing.T) {
 	dataString := `{"id": "00000000-0000-0000-0000-000000000000"}`
 
 	// Create token with `book:delete` credential.
-	tokenOnlyDelete, err := utils.GenerateNewAccessAndRefreshTokens(
+	tokenOnlyDelete, err := utils.GenerateNewTokens(
 		uuid.NewString(),
 		[]string{"book:delete"},
 	)
@@ -32,7 +32,7 @@ func TestPrivateRoutes(t *testing.T) {
 	}
 
 	// Create token without any credentials.
-	tokenNoAccess, err := utils.GenerateNewAccessAndRefreshTokens(
+	tokenNoAccess, err := utils.GenerateNewTokens(
 		uuid.NewString(),
 		[]string{},
 	)

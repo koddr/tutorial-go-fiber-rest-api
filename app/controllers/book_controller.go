@@ -3,10 +3,10 @@ package controllers
 import (
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/koddr/tutorial-go-fiber-rest-api/app/models"
+	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/credentials"
 	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/utils"
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
 )
@@ -42,6 +42,7 @@ func GetBooks(c *fiber.Ctx) error {
 		})
 	}
 
+	// Return status 200 OK.
 	return c.JSON(fiber.Map{
 		"error": false,
 		"msg":   nil,
@@ -90,6 +91,7 @@ func GetBook(c *fiber.Ctx) error {
 		})
 	}
 
+	// Return status 200 OK.
 	return c.JSON(fiber.Map{
 		"error": false,
 		"msg":   nil,
@@ -134,7 +136,7 @@ func CreateBook(c *fiber.Ctx) error {
 	}
 
 	// Set credential `book:create` from JWT data of current book.
-	credential := claims.Credentials["book:create"]
+	credential := claims.Credentials[credentials.BookCreate]
 
 	// Only user with `book:create` credential can create a new book.
 	if !credential {
@@ -167,17 +169,17 @@ func CreateBook(c *fiber.Ctx) error {
 		})
 	}
 
+	// Create a new validator for a Book model.
+	validate := utils.NewValidator()
+
 	// Set initialized default data for book:
 	book.ID = uuid.New()
 	book.CreatedAt = time.Now()
 	book.UserID = claims.UserID
 	book.BookStatus = 1 // 0 == draft, 1 == active
 
-	// Create a new validator for a Book model.
-	validate := validator.New()
-
 	// Validate book fields.
-	if err := validate.StructPartial(book, "title", "author"); err != nil {
+	if err := validate.Struct(book); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
@@ -194,6 +196,7 @@ func CreateBook(c *fiber.Ctx) error {
 		})
 	}
 
+	// Return status 200 OK.
 	return c.JSON(fiber.Map{
 		"error": false,
 		"msg":   nil,
@@ -210,10 +213,11 @@ func CreateBook(c *fiber.Ctx) error {
 // @Param id body string true "Book ID"
 // @Param title body string true "Title"
 // @Param author body string true "Author"
+// @Param user_id body string true "User ID"
 // @Param book_status body number true "Book status"
 // @Param book_attrs body array true "Book attributes"
-// @Success 202 {object} models.Book
-// @Router /api/v1/book [patch]
+// @Success 202 {object} response
+// @Router /api/v1/book [put]
 func UpdateBook(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
@@ -241,7 +245,7 @@ func UpdateBook(c *fiber.Ctx) error {
 	}
 
 	// Set credential `book:update` from JWT data of current book.
-	credential := claims.Credentials["book:update"]
+	credential := claims.Credentials[credentials.BookDelete]
 
 	// Only book creator with `book:update` credential can update his book.
 	if !credential {
@@ -293,16 +297,7 @@ func UpdateBook(c *fiber.Ctx) error {
 		book.UpdatedAt = time.Now()
 
 		// Create a new validator for a Book model.
-		validate := validator.New()
-
-		// Custom validation for uuid.UUID fields.
-		_ = validate.RegisterValidation("uuid", func(fl validator.FieldLevel) bool {
-			field := fl.Field().String()
-			if _, err := uuid.Parse(field); err != nil {
-				return true
-			}
-			return false
-		})
+		validate := utils.NewValidator()
 
 		// Validate book fields.
 		if err := validate.Struct(book); err != nil {
@@ -322,7 +317,8 @@ func UpdateBook(c *fiber.Ctx) error {
 			})
 		}
 
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+		// Return status 201.
+		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 			"error": false,
 			"msg":   nil,
 		})
@@ -342,7 +338,7 @@ func UpdateBook(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id body string true "Book ID"
-// @Success 200 {string} string "ok"
+// @Success 200 {string} response
 // @Router /api/v1/book [delete]
 func DeleteBook(c *fiber.Ctx) error {
 	// Get now time.
@@ -371,7 +367,7 @@ func DeleteBook(c *fiber.Ctx) error {
 	}
 
 	// Set credential `book:delete` from JWT data of current book.
-	credential := claims.Credentials["book:delete"]
+	credential := claims.Credentials[credentials.BookDelete]
 
 	// Only book creator with `book:delete` credential can delete his book.
 	if !credential {
@@ -395,7 +391,7 @@ func DeleteBook(c *fiber.Ctx) error {
 	}
 
 	// Create a new validator for a Book model.
-	validate := validator.New()
+	validate := utils.NewValidator()
 
 	// Validate book fields.
 	if err := validate.StructPartial(book, "id"); err != nil {
@@ -440,6 +436,7 @@ func DeleteBook(c *fiber.Ctx) error {
 			})
 		}
 
+		// Return status 200 OK.
 		return c.JSON(fiber.Map{
 			"error": false,
 			"msg":   nil,

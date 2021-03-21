@@ -5,9 +5,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/koddr/tutorial-go-fiber-rest-api/app/credentials"
+	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/credentials"
 	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/utils"
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/cache"
+	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
 )
 
 // Renew struct to describe refresh token object.
@@ -75,13 +76,40 @@ func RenewTokens(c *fiber.Ctx) error {
 	// Checking, if now time greather than Refresh token expiration time.
 	if now < expiresRefreshToken {
 		// Define user ID.
-		userID := claims.UserID.String()
+		userID := claims.UserID
+
+		// Create database connection.
+		db, err := database.OpenDBConnection()
+		if err != nil {
+			// Return status 500 and database connection error.
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   err.Error(),
+			})
+		}
+
+		// Get user by ID.
+		foundedUser, err := db.GetUserByID(userID)
+		if err != nil {
+			// Return, if user not found.
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": true,
+				"msg":   "user with the given ID is not found",
+			})
+		}
+
+		// Get role credentials from founded user.
+		credentials, err := credentials.GetCredentialsByRole(foundedUser.UserRole)
+		if err != nil {
+			// Return status 400 and error message.
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": true,
+				"msg":   err.Error(),
+			})
+		}
 
 		// Generate JWT Access & Refresh tokens.
-		tokens, err := utils.GenerateNewAccessAndRefreshTokens(
-			userID,
-			credentials.BookCredentials["full"],
-		)
+		tokens, err := utils.GenerateNewTokens(userID.String(), credentials)
 		if err != nil {
 			// Return status 500 and token generation error.
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -94,7 +122,7 @@ func RenewTokens(c *fiber.Ctx) error {
 		ctx := context.Background()
 
 		// Save refresh token to Redis.
-		errRedis := cache.RedisConnection().Set(ctx, userID, tokens.Refresh, 0).Err()
+		errRedis := cache.RedisConnection().Set(ctx, userID.String(), tokens.Refresh, 0).Err()
 		if errRedis != nil {
 			// Return status 500 and Redis connection error.
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
