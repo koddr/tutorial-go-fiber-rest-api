@@ -7,8 +7,9 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
+// RedisConnection func for connect to Redis server.
 func RedisConnection() *redis.Client {
-	// Define DB number.
+	// Define Redis database number.
 	databaseNumber, _ := strconv.Atoi(os.Getenv("REDIS_DB_NUMBER"))
 
 	// Set Redis options.
