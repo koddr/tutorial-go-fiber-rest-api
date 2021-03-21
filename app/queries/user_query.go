@@ -52,10 +52,13 @@ func (q *UserQueries) GetUserByEmail(email string) (models.User, error) {
 // CreateUser query for creating a new user by given email and password hash.
 func (q *UserQueries) CreateUser(u *models.User) error {
 	// Define query string.
-	query := `INSERT INTO users VALUES ($1, $2, $3, $4, $5, $6)`
+	query := `INSERT INTO users VALUES ($1, $2, $3, $4, $5, $6, $7)`
 
 	// Send query to database.
-	_, err := q.Exec(query, u.ID, u.CreatedAt, u.UpdatedAt, u.Email, u.PasswordHash, u.UserStatus)
+	_, err := q.Exec(
+		query,
+		u.ID, u.CreatedAt, u.UpdatedAt, u.Email, u.PasswordHash, u.UserStatus, u.UserRole,
+	)
 	if err != nil {
 		// Return only error.
 		return err

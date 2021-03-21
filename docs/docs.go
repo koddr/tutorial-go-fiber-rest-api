@@ -32,8 +32,95 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/book": {
+        "/v1/book": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update book.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Book"
+                ],
+                "summary": "update book",
+                "parameters": [
+                    {
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Title",
+                        "name": "title",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Author",
+                        "name": "author",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Book status",
+                        "name": "book_status",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Book attributes",
+                        "name": "book_attrs",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BookAttrs"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create a new book.",
                 "consumes": [
                     "application/json"
@@ -42,7 +129,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Private"
+                    "Book"
                 ],
                 "summary": "create a new book",
                 "parameters": [
@@ -66,8 +153,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Book"
                         }
@@ -75,6 +162,11 @@ var doc = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete book by given ID.",
                 "consumes": [
                     "application/json"
@@ -83,7 +175,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Private"
+                    "Book"
                 ],
                 "summary": "delete book by given ID",
                 "parameters": [
@@ -98,48 +190,16 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "204": {
                         "description": "ok",
                         "schema": {
                             "type": "string"
                         }
                     }
                 }
-            },
-            "patch": {
-                "description": "Update book.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Private"
-                ],
-                "summary": "update book",
-                "parameters": [
-                    {
-                        "description": "Book ID",
-                        "name": "id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "202": {
-                        "description": "Accepted",
-                        "schema": {
-                            "$ref": "#/definitions/models.Book"
-                        }
-                    }
-                }
             }
         },
-        "/api/v1/book/{id}": {
+        "/v1/book/{id}": {
             "get": {
                 "description": "Get book by given ID.",
                 "consumes": [
@@ -149,7 +209,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Public"
+                    "Book"
                 ],
                 "summary": "get book by given ID",
                 "parameters": [
@@ -171,7 +231,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/books": {
+        "/v1/books": {
             "get": {
                 "description": "Get all exists books.",
                 "consumes": [
@@ -181,7 +241,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Public"
+                    "Book"
                 ],
                 "summary": "get all exists books",
                 "responses": {
@@ -197,9 +257,14 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/user/login": {
+        "/v1/token/renew": {
             "post": {
-                "description": "Auth user and return JWT.",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Renew an Access \u0026 Refresh tokens.",
                 "consumes": [
                     "application/json"
                 ],
@@ -207,9 +272,43 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Public"
+                    "Token"
                 ],
-                "summary": "auth user and return JWT",
+                "summary": "renew an Access \u0026 Refresh tokens",
+                "parameters": [
+                    {
+                        "description": "Refresh token",
+                        "name": "refresh_token",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/sign/in": {
+            "post": {
+                "description": "Auth user and return JWT and refresh token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "auth user and return JWT and refresh token",
                 "parameters": [
                     {
                         "description": "User Email",
@@ -232,15 +331,43 @@ var doc = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "type": "string"
                         }
                     }
                 }
             }
         },
-        "/api/v1/user/register": {
+        "/v1/user/sign/out": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "De-authorize user and delete refresh token from Redis.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "de-authorize user and delete refresh token from Redis",
+                "responses": {
+                    "204": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/sign/up": {
             "post": {
                 "description": "Create a new user.",
                 "consumes": [
@@ -250,7 +377,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Public"
+                    "User"
                 ],
                 "summary": "create a new user",
                 "parameters": [
@@ -264,8 +391,17 @@ var doc = `{
                         }
                     },
                     {
-                        "description": "Password Hash",
-                        "name": "password_hash",
+                        "description": "Password",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "User role",
+                        "name": "user_role",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -274,8 +410,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.User"
                         }
@@ -289,6 +425,7 @@ var doc = `{
             "type": "object",
             "required": [
                 "author",
+                "book_status",
                 "id",
                 "title",
                 "user_id"
@@ -339,12 +476,11 @@ var doc = `{
             "required": [
                 "email",
                 "id",
-                "password_hash"
+                "password_hash",
+                "user_role",
+                "user_status"
             ],
             "properties": {
-                "User_status": {
-                    "type": "integer"
-                },
                 "created_at": {
                     "type": "string"
                 },
@@ -359,6 +495,12 @@ var doc = `{
                 },
                 "updated_at": {
                     "type": "string"
+                },
+                "user_role": {
+                    "type": "string"
+                },
+                "user_status": {
+                    "type": "integer"
                 }
             }
         }
@@ -385,7 +527,7 @@ type swaggerInfo struct {
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
 	Host:        "",
-	BasePath:    "/",
+	BasePath:    "/api",
 	Schemes:     []string{},
 	Title:       "API",
 	Description: "This is an auto-generated API Docs.",

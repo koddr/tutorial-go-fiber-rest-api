@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/koddr/tutorial-go-fiber-rest-api/app/models"
-	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/credentials"
+	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/repository"
 	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/utils"
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
 )
@@ -14,11 +14,11 @@ import (
 // GetBooks func gets all exists books.
 // @Description Get all exists books.
 // @Summary get all exists books
-// @Tags Public
+// @Tags Book
 // @Accept json
 // @Produce json
 // @Success 200 {array} models.Book
-// @Router /api/v1/books [get]
+// @Router /v1/books [get]
 func GetBooks(c *fiber.Ctx) error {
 	// Create database connection.
 	db, err := database.OpenDBConnection()
@@ -54,12 +54,12 @@ func GetBooks(c *fiber.Ctx) error {
 // GetBook func gets book by given ID or 404 error.
 // @Description Get book by given ID.
 // @Summary get book by given ID
-// @Tags Public
+// @Tags Book
 // @Accept json
 // @Produce json
 // @Param id path string true "Book ID"
 // @Success 200 {object} models.Book
-// @Router /api/v1/book/{id} [get]
+// @Router /v1/book/{id} [get]
 func GetBook(c *fiber.Ctx) error {
 	// Catch book ID from URL.
 	id, err := uuid.Parse(c.Params("id"))
@@ -102,13 +102,16 @@ func GetBook(c *fiber.Ctx) error {
 // CreateBook func for creates a new book.
 // @Description Create a new book.
 // @Summary create a new book
-// @Tags Private
+// @Tags Book
 // @Accept json
 // @Produce json
 // @Param title body string true "Title"
 // @Param author body string true "Author"
-// @Success 201 {object} models.Book
-// @Router /api/v1/book [post]
+// @Param user_id body string true "User ID"
+// @Param book_attrs body models.BookAttrs true "Book attributes"
+// @Success 200 {object} models.Book
+// @Security ApiKeyAuth
+// @Router /v1/book [post]
 func CreateBook(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
@@ -136,7 +139,7 @@ func CreateBook(c *fiber.Ctx) error {
 	}
 
 	// Set credential `book:create` from JWT data of current book.
-	credential := claims.Credentials[credentials.BookCreate]
+	credential := claims.Credentials[repository.BookCreateCredential]
 
 	// Only user with `book:create` credential can create a new book.
 	if !credential {
@@ -207,17 +210,18 @@ func CreateBook(c *fiber.Ctx) error {
 // UpdateBook func for updates book by given ID.
 // @Description Update book.
 // @Summary update book
-// @Tags Private
+// @Tags Book
 // @Accept json
 // @Produce json
 // @Param id body string true "Book ID"
 // @Param title body string true "Title"
 // @Param author body string true "Author"
 // @Param user_id body string true "User ID"
-// @Param book_status body number true "Book status"
-// @Param book_attrs body array true "Book attributes"
-// @Success 202 {object} response
-// @Router /api/v1/book [put]
+// @Param book_status body integer true "Book status"
+// @Param book_attrs body models.BookAttrs true "Book attributes"
+// @Success 202 {string} status "ok"
+// @Security ApiKeyAuth
+// @Router /v1/book [put]
 func UpdateBook(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
@@ -245,7 +249,7 @@ func UpdateBook(c *fiber.Ctx) error {
 	}
 
 	// Set credential `book:update` from JWT data of current book.
-	credential := claims.Credentials[credentials.BookDelete]
+	credential := claims.Credentials[repository.BookUpdateCredential]
 
 	// Only book creator with `book:update` credential can update his book.
 	if !credential {
@@ -334,12 +338,13 @@ func UpdateBook(c *fiber.Ctx) error {
 // DeleteBook func for deletes book by given ID.
 // @Description Delete book by given ID.
 // @Summary delete book by given ID
-// @Tags Private
+// @Tags Book
 // @Accept json
 // @Produce json
 // @Param id body string true "Book ID"
-// @Success 200 {string} response
-// @Router /api/v1/book [delete]
+// @Success 204 {string} status "ok"
+// @Security ApiKeyAuth
+// @Router /v1/book [delete]
 func DeleteBook(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
@@ -367,7 +372,7 @@ func DeleteBook(c *fiber.Ctx) error {
 	}
 
 	// Set credential `book:delete` from JWT data of current book.
-	credential := claims.Credentials[credentials.BookDelete]
+	credential := claims.Credentials[repository.BookDeleteCredential]
 
 	// Only book creator with `book:delete` credential can delete his book.
 	if !credential {
@@ -436,11 +441,8 @@ func DeleteBook(c *fiber.Ctx) error {
 			})
 		}
 
-		// Return status 200 OK.
-		return c.JSON(fiber.Map{
-			"error": false,
-			"msg":   nil,
-		})
+		// Return status 204 no content.
+		return c.SendStatus(fiber.StatusNoContent)
 	} else {
 		// Return status 403 and permission denied error message.
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{

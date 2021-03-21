@@ -7,7 +7,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/koddr/tutorial-go-fiber-rest-api/app/models"
-	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/credentials"
 	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/utils"
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/cache"
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
@@ -21,20 +20,17 @@ var (
 // UserSignUp func for create a new user.
 // @Description Create a new user.
 // @Summary create a new user
-// @Tags Public
+// @Tags User
 // @Accept json
 // @Produce json
 // @Param email body string true "Email"
 // @Param password body string true "Password"
 // @Param user_role body string true "User role"
 // @Success 200 {object} models.User
-// @Router /api/v1/user/sign/up [post]
+// @Router /v1/user/sign/up [post]
 func UserSignUp(c *fiber.Ctx) error {
 	// Create a new user auth struct.
 	signUp := &models.SignUp{}
-
-	// Create a new validator for a User model.
-	validate := utils.NewValidator()
 
 	// Checking received data from JSON body.
 	if err := c.BodyParser(signUp); err != nil {
@@ -45,7 +41,10 @@ func UserSignUp(c *fiber.Ctx) error {
 		})
 	}
 
-	// Validate auth fields.
+	// Create a new validator for a User model.
+	validate := utils.NewValidator()
+
+	// Validate sign up fields.
 	if err := validate.Struct(signUp); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -64,6 +63,16 @@ func UserSignUp(c *fiber.Ctx) error {
 		})
 	}
 
+	// Checking role from sign up data.
+	role, err := utils.VerifyRole(signUp.UserRole)
+	if err != nil {
+		// Return status 400 and error message.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
 	// Create a new user struct.
 	user := &models.User{}
 
@@ -73,7 +82,16 @@ func UserSignUp(c *fiber.Ctx) error {
 	user.Email = signUp.Email
 	user.PasswordHash = utils.GeneratePassword(signUp.Password)
 	user.UserStatus = 1 // 0 == blocked, 1 == active
-	user.UserRole = signUp.UserRole
+	user.UserRole = role
+
+	// Validate user fields.
+	if err := validate.Struct(user); err != nil {
+		// Return, if some fields are not valid.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   utils.ValidatorErrors(err),
+		})
+	}
 
 	// Create a new user with validated data.
 	if err := db.CreateUser(user); err != nil {
@@ -98,13 +116,13 @@ func UserSignUp(c *fiber.Ctx) error {
 // UserSignIn method auth user and return Access & Refresh tokens.
 // @Description Auth user and return JWT and refresh token.
 // @Summary auth user and return JWT and refresh token
-// @Tags Public
+// @Tags User
 // @Accept json
 // @Produce json
 // @Param email body string true "User Email"
 // @Param password body string true "User Password"
-// @Success 200 {object} models.User
-// @Router /api/v1/user/sign/in [post]
+// @Success 200 {string} status "ok"
+// @Router /v1/user/sign/in [post]
 func UserSignIn(c *fiber.Ctx) error {
 	// Create a new user auth struct.
 	signIn := &models.SignIn{}
@@ -139,7 +157,7 @@ func UserSignIn(c *fiber.Ctx) error {
 	}
 
 	// Get role credentials from founded user.
-	credentials, err := credentials.GetCredentialsByRole(foundedUser.UserRole)
+	credentials, err := utils.GetCredentialsByRole(foundedUser.UserRole)
 	if err != nil {
 		// Return status 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -185,11 +203,12 @@ func UserSignIn(c *fiber.Ctx) error {
 // UserSignOut method for de-authorize user and delete refresh token from Redis.
 // @Description De-authorize user and delete refresh token from Redis.
 // @Summary de-authorize user and delete refresh token from Redis
-// @Tags Private
+// @Tags User
 // @Accept json
 // @Produce json
-// @Success 200 {object} response
-// @Router /api/v1/user/sign-out [post]
+// @Success 204 {string} status "ok"
+// @Security ApiKeyAuth
+// @Router /v1/user/sign/out [post]
 func UserSignOut(c *fiber.Ctx) error {
 	// Get claims from JWT.
 	claims, err := utils.ExtractTokenMetadata(c)

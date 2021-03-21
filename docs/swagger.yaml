@@ -1,4 +1,4 @@
-basePath: /
+basePath: /api
 definitions:
   models.Book:
     properties:
@@ -20,6 +20,7 @@ definitions:
         type: string
     required:
     - author
+    - book_status
     - id
     - title
     - user_id
@@ -35,8 +36,6 @@ definitions:
     type: object
   models.User:
     properties:
-      User_status:
-        type: integer
       created_at:
         type: string
       email:
@@ -47,10 +46,16 @@ definitions:
         type: string
       updated_at:
         type: string
+      user_role:
+        type: string
+      user_status:
+        type: integer
     required:
     - email
     - id
     - password_hash
+    - user_role
+    - user_status
     type: object
 info:
   contact:
@@ -64,7 +69,7 @@ info:
   title: API
   version: "1.0"
 paths:
-  /api/v1/book:
+  /v1/book:
     delete:
       consumes:
       - application/json
@@ -79,34 +84,15 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
+        "204":
           description: ok
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: delete book by given ID
       tags:
-      - Private
-    patch:
-      consumes:
-      - application/json
-      description: Update book.
-      parameters:
-      - description: Book ID
-        in: body
-        name: id
-        required: true
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "202":
-          description: Accepted
-          schema:
-            $ref: '#/definitions/models.Book'
-      summary: update book
-      tags:
-      - Private
+      - Book
     post:
       consumes:
       - application/json
@@ -127,14 +113,69 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
             $ref: '#/definitions/models.Book'
+      security:
+      - ApiKeyAuth: []
       summary: create a new book
       tags:
-      - Private
-  /api/v1/book/{id}:
+      - Book
+    put:
+      consumes:
+      - application/json
+      description: Update book.
+      parameters:
+      - description: Book ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: Title
+        in: body
+        name: title
+        required: true
+        schema:
+          type: string
+      - description: Author
+        in: body
+        name: author
+        required: true
+        schema:
+          type: string
+      - description: User ID
+        in: body
+        name: user_id
+        required: true
+        schema:
+          type: string
+      - description: Book status
+        in: body
+        name: book_status
+        required: true
+        schema:
+          type: integer
+      - description: Book attributes
+        in: body
+        name: book_attrs
+        required: true
+        schema:
+          $ref: '#/definitions/models.BookAttrs'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: update book
+      tags:
+      - Book
+  /v1/book/{id}:
     get:
       consumes:
       - application/json
@@ -154,8 +195,8 @@ paths:
             $ref: '#/definitions/models.Book'
       summary: get book by given ID
       tags:
-      - Public
-  /api/v1/books:
+      - Book
+  /v1/books:
     get:
       consumes:
       - application/json
@@ -171,12 +212,36 @@ paths:
             type: array
       summary: get all exists books
       tags:
-      - Public
-  /api/v1/user/login:
+      - Book
+  /v1/token/renew:
     post:
       consumes:
       - application/json
-      description: Auth user and return JWT.
+      description: Renew an Access & Refresh tokens.
+      parameters:
+      - description: Refresh token
+        in: body
+        name: refresh_token
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: renew an Access & Refresh tokens
+      tags:
+      - Token
+  /v1/user/sign/in:
+    post:
+      consumes:
+      - application/json
+      description: Auth user and return JWT and refresh token.
       parameters:
       - description: User Email
         in: body
@@ -194,13 +259,30 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: ok
           schema:
-            $ref: '#/definitions/models.User'
-      summary: auth user and return JWT
+            type: string
+      summary: auth user and return JWT and refresh token
       tags:
-      - Public
-  /api/v1/user/register:
+      - User
+  /v1/user/sign/out:
+    post:
+      consumes:
+      - application/json
+      description: De-authorize user and delete refresh token from Redis.
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: de-authorize user and delete refresh token from Redis
+      tags:
+      - User
+  /v1/user/sign/up:
     post:
       consumes:
       - application/json
@@ -212,22 +294,28 @@ paths:
         required: true
         schema:
           type: string
-      - description: Password Hash
+      - description: Password
         in: body
-        name: password_hash
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: User role
+        in: body
+        name: user_role
         required: true
         schema:
           type: string
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
             $ref: '#/definitions/models.User'
       summary: create a new user
       tags:
-      - Public
+      - User
 securityDefinitions:
   ApiKeyAuth:
     in: header

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/credentials"
 	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/utils"
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/cache"
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
@@ -19,12 +18,13 @@ type Renew struct {
 // RenewTokens method for renew an Access & Refresh tokens.
 // @Description Renew an Access & Refresh tokens.
 // @Summary renew an Access & Refresh tokens
-// @Tags Private
+// @Tags Token
 // @Accept json
 // @Produce json
 // @Param refresh_token body string true "Refresh token"
-// @Success 200 {object} response
-// @Router /api/v1/user/sign-in [post]
+// @Success 200 {string} status "ok"
+// @Security ApiKeyAuth
+// @Router /v1/token/renew [post]
 func RenewTokens(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
@@ -99,7 +99,7 @@ func RenewTokens(c *fiber.Ctx) error {
 		}
 
 		// Get role credentials from founded user.
-		credentials, err := credentials.GetCredentialsByRole(foundedUser.UserRole)
+		credentials, err := utils.GetCredentialsByRole(foundedUser.UserRole)
 		if err != nil {
 			// Return status 400 and error message.
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

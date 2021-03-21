@@ -1,6 +1,10 @@
-package credentials
+package utils
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/repository"
+)
 
 // GetCredentialsByRole func for getting credentials from a role name.
 func GetCredentialsByRole(role string) ([]string, error) {
@@ -9,20 +13,23 @@ func GetCredentialsByRole(role string) ([]string, error) {
 
 	// Switch given role.
 	switch role {
-	case "admin":
+	case repository.AdminRoleName:
 		// Admin credentials (all access).
 		credentials = []string{
-			BookCreate, BookUpdate, BookDelete,
+			repository.BookCreateCredential,
+			repository.BookUpdateCredential,
+			repository.BookDeleteCredential,
 		}
-	case "moderator":
+	case repository.ModeratorRoleName:
 		// Moderator credentials (only book creation and update).
 		credentials = []string{
-			BookCreate, BookUpdate,
+			repository.BookCreateCredential,
+			repository.BookUpdateCredential,
 		}
-	case "user":
+	case repository.UserRoleName:
 		// Simple user credentials (only book creation).
 		credentials = []string{
-			BookCreate,
+			repository.BookCreateCredential,
 		}
 	default:
 		// Return error message.
