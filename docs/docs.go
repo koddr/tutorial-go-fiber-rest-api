@@ -150,6 +150,24 @@ var doc = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Book attributes",
+                        "name": "book_attrs",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BookAttrs"
+                        }
                     }
                 ],
                 "responses": {
@@ -264,7 +282,7 @@ var doc = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Renew an Access \u0026 Refresh tokens.",
+                "description": "Renew access and refresh tokens.",
                 "consumes": [
                     "application/json"
                 ],
@@ -274,7 +292,7 @@ var doc = `{
                 "tags": [
                     "Token"
                 ],
-                "summary": "renew an Access \u0026 Refresh tokens",
+                "summary": "renew access and refresh tokens",
                 "parameters": [
                     {
                         "description": "Refresh token",
@@ -298,17 +316,11 @@ var doc = `{
         },
         "/v1/user/sign/in": {
             "post": {
-                "description": "Auth user and return JWT and refresh token.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
+                "description": "Auth user and return access and refresh token.",
                 "tags": [
                     "User"
                 ],
-                "summary": "auth user and return JWT and refresh token",
+                "summary": "auth user and return access and refresh token",
                 "parameters": [
                     {
                         "description": "User Email",
@@ -425,6 +437,7 @@ var doc = `{
             "type": "object",
             "required": [
                 "author",
+                "book_attrs",
                 "book_status",
                 "id",
                 "title",

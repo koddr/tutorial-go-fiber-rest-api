@@ -11,9 +11,9 @@ import (
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
 )
 
-// RenewTokens method for renew an Access & Refresh tokens.
-// @Description Renew an Access & Refresh tokens.
-// @Summary renew an Access & Refresh tokens
+// RenewTokens method for renew access and refresh tokens.
+// @Description Renew access and refresh tokens.
+// @Summary renew access and refresh tokens
 // @Tags Token
 // @Accept json
 // @Produce json

@@ -12,7 +12,7 @@ import (
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
 )
 
-// UserSignUp func for create a new user.
+// UserSignUp method to create a new user.
 // @Description Create a new user.
 // @Summary create a new user
 // @Tags User
@@ -108,9 +108,9 @@ func UserSignUp(c *fiber.Ctx) error {
 	})
 }
 
-// UserSignIn method auth user and return Access & Refresh tokens.
-// @Description Auth user and return JWT and refresh token.
-// @Summary auth user and return JWT and refresh token
+// UserSignIn method to auth user and return access and refresh tokens.
+// @Description Auth user and return access and refresh token.
+// @Summary auth user and return access and refresh token
 // @Tags User
 // @Accept json
 // @Produce json
@@ -151,6 +151,16 @@ func UserSignIn(c *fiber.Ctx) error {
 		})
 	}
 
+	// Compare given user password with stored in found user.
+	compareUserPassword := utils.ComparePasswords(foundedUser.PasswordHash, signIn.Password)
+	if !compareUserPassword {
+		// Return, if password is not compare to stored in database.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "wrong user email address or password",
+		})
+	}
+
 	// Get role credentials from founded user.
 	credentials, err := utils.GetCredentialsByRole(foundedUser.UserRole)
 	if err != nil {
@@ -161,7 +171,7 @@ func UserSignIn(c *fiber.Ctx) error {
 		})
 	}
 
-	// Generate JWT Access & Refresh tokens.
+	// Generate a new pair of access and refresh tokens.
 	tokens, err := utils.GenerateNewTokens(foundedUser.ID.String(), credentials)
 	if err != nil {
 		// Return status 500 and token generation error.
@@ -198,7 +208,7 @@ func UserSignIn(c *fiber.Ctx) error {
 	})
 }
 
-// UserSignOut method for de-authorize user and delete refresh token from Redis.
+// UserSignOut method to de-authorize user and delete refresh token from Redis.
 // @Description De-authorize user and delete refresh token from Redis.
 // @Summary de-authorize user and delete refresh token from Redis
 // @Tags User

@@ -20,6 +20,7 @@ definitions:
         type: string
     required:
     - author
+    - book_attrs
     - book_status
     - id
     - title
@@ -110,6 +111,18 @@ paths:
         required: true
         schema:
           type: string
+      - description: User ID
+        in: body
+        name: user_id
+        required: true
+        schema:
+          type: string
+      - description: Book attributes
+        in: body
+        name: book_attrs
+        required: true
+        schema:
+          $ref: '#/definitions/models.BookAttrs'
       produces:
       - application/json
       responses:
@@ -217,7 +230,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Renew an Access & Refresh tokens.
+      description: Renew access and refresh tokens.
       parameters:
       - description: Refresh token
         in: body
@@ -234,14 +247,12 @@ paths:
             type: string
       security:
       - ApiKeyAuth: []
-      summary: renew an Access & Refresh tokens
+      summary: renew access and refresh tokens
       tags:
       - Token
   /v1/user/sign/in:
     post:
-      consumes:
-      - application/json
-      description: Auth user and return JWT and refresh token.
+      description: Auth user and return access and refresh token.
       parameters:
       - description: User Email
         in: body
@@ -255,14 +266,12 @@ paths:
         required: true
         schema:
           type: string
-      produces:
-      - application/json
       responses:
         "200":
           description: ok
           schema:
             type: string
-      summary: auth user and return JWT and refresh token
+      summary: auth user and return access and refresh token
       tags:
       - User
   /v1/user/sign/out:
