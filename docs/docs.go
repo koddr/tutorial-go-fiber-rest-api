@@ -317,6 +317,12 @@ var doc = `{
         "/v1/user/sign/in": {
             "post": {
                 "description": "Auth user and return access and refresh token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "User"
                 ],
