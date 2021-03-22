@@ -6,7 +6,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/koddr/tutorial-go-fiber-rest-api/app/models"
-	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/repository"
 	"github.com/koddr/tutorial-go-fiber-rest-api/pkg/utils"
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
 )
@@ -138,18 +137,6 @@ func CreateBook(c *fiber.Ctx) error {
 		})
 	}
 
-	// Set credential `book:create` from JWT data of current book.
-	credential := claims.Credentials[repository.BookCreateCredential]
-
-	// Only user with `book:create` credential can create a new book.
-	if !credential {
-		// Return status 403 and permission denied error message.
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error": true,
-			"msg":   "permission denied, check credentials of your token",
-		})
-	}
-
 	// Create new Book struct
 	book := &models.Book{}
 
@@ -178,7 +165,6 @@ func CreateBook(c *fiber.Ctx) error {
 	// Set initialized default data for book:
 	book.ID = uuid.New()
 	book.CreatedAt = time.Now()
-	book.UserID = claims.UserID
 	book.BookStatus = 1 // 0 == draft, 1 == active
 
 	// Validate book fields.
@@ -248,18 +234,6 @@ func UpdateBook(c *fiber.Ctx) error {
 		})
 	}
 
-	// Set credential `book:update` from JWT data of current book.
-	credential := claims.Credentials[repository.BookUpdateCredential]
-
-	// Only book creator with `book:update` credential can update his book.
-	if !credential {
-		// Return status 403 and permission denied error message.
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error": true,
-			"msg":   "permission denied, check credentials of your token",
-		})
-	}
-
 	// Create new Book struct
 	book := &models.Book{}
 
@@ -292,47 +266,35 @@ func UpdateBook(c *fiber.Ctx) error {
 		})
 	}
 
-	// Set user ID from JWT data of current user.
-	userID := claims.UserID
+	// Set initialized default data for book:
+	book.UpdatedAt = time.Now()
 
-	// Only the creator can delete his book.
-	if foundedBook.UserID == userID {
-		// Set initialized default data for book:
-		book.UpdatedAt = time.Now()
+	// Create a new validator for a Book model.
+	validate := utils.NewValidator()
 
-		// Create a new validator for a Book model.
-		validate := utils.NewValidator()
-
-		// Validate book fields.
-		if err := validate.Struct(book); err != nil {
-			// Return, if some fields are not valid.
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error": true,
-				"msg":   utils.ValidatorErrors(err),
-			})
-		}
-
-		// Update book by given ID.
-		if err := db.UpdateBook(foundedBook.ID, book); err != nil {
-			// Return status 500 and error message.
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": true,
-				"msg":   err.Error(),
-			})
-		}
-
-		// Return status 201.
-		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-			"error": false,
-			"msg":   nil,
-		})
-	} else {
-		// Return status 403 and permission denied error message.
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+	// Validate book fields.
+	if err := validate.Struct(book); err != nil {
+		// Return, if some fields are not valid.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
-			"msg":   "permission denied, only the creator can delete his book",
+			"msg":   utils.ValidatorErrors(err),
 		})
 	}
+
+	// Update book by given ID.
+	if err := db.UpdateBook(foundedBook.ID, book); err != nil {
+		// Return status 500 and error message.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Return status 201.
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"error": false,
+		"msg":   nil,
+	})
 }
 
 // DeleteBook func for deletes book by given ID.
@@ -368,18 +330,6 @@ func DeleteBook(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": true,
 			"msg":   "unauthorized, check expiration time of your token",
-		})
-	}
-
-	// Set credential `book:delete` from JWT data of current book.
-	credential := claims.Credentials[repository.BookDeleteCredential]
-
-	// Only book creator with `book:delete` credential can delete his book.
-	if !credential {
-		// Return status 403 and permission denied error message.
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error": true,
-			"msg":   "permission denied, check credentials of your token",
 		})
 	}
 
@@ -427,27 +377,15 @@ func DeleteBook(c *fiber.Ctx) error {
 		})
 	}
 
-	// Set user ID from JWT data of current user.
-	userID := claims.UserID
-
-	// Only the creator can delete his book.
-	if foundedBook.UserID == userID {
-		// Delete book by given ID.
-		if err := db.DeleteBook(foundedBook.ID); err != nil {
-			// Return status 500 and error message.
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": true,
-				"msg":   err.Error(),
-			})
-		}
-
-		// Return status 204 no content.
-		return c.SendStatus(fiber.StatusNoContent)
-	} else {
-		// Return status 403 and permission denied error message.
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+	// Delete book by given ID.
+	if err := db.DeleteBook(foundedBook.ID); err != nil {
+		// Return status 500 and error message.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
-			"msg":   "permission denied, only the creator can delete his book",
+			"msg":   err.Error(),
 		})
 	}
+
+	// Return status 204 no content.
+	return c.SendStatus(fiber.StatusNoContent)
 }

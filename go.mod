@@ -7,7 +7,6 @@ require (
 	github.com/arsmn/fiber-swagger/v2 v2.6.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-playground/validator/v10 v10.4.1
-	github.com/go-redis/redis/v8 v8.7.1
 	github.com/gofiber/fiber/v2 v2.6.0
 	github.com/gofiber/jwt/v2 v2.2.0
 	github.com/google/uuid v1.2.0
@@ -16,5 +15,4 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.0
-	golang.org/x/crypto v0.0.0-20210317152858-513c2a44f670
 )
