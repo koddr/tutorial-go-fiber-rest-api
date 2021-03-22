@@ -13,7 +13,7 @@ import (
 // GetBooks func gets all exists books.
 // @Description Get all exists books.
 // @Summary get all exists books
-// @Tags Book
+// @Tags Books
 // @Accept json
 // @Produce json
 // @Success 200 {array} models.Book

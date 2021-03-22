@@ -20,7 +20,7 @@ make docker.run
 
 4. Go to API Docs page (Swagger): [localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html)
 
-![Screenshot](https://user-images.githubusercontent.com/11155743/111972767-dd16e400-8b0e-11eb-8ba1-98c648f56a5a.png)
+![Screenshot](https://user-images.githubusercontent.com/11155743/111976202-6f6cb700-8b12-11eb-9568-5143f2ca054d.png)
 
 ## ⚠️ License
 
