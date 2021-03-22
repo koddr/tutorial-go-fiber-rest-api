@@ -79,15 +79,6 @@ var doc = `{
                         }
                     },
                     {
-                        "description": "User ID",
-                        "name": "user_id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "description": "Book status",
                         "name": "book_status",
                         "in": "body",
@@ -107,7 +98,7 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "202": {
+                    "201": {
                         "description": "ok",
                         "schema": {
                             "type": "string"
@@ -145,15 +136,6 @@ var doc = `{
                     {
                         "description": "Author",
                         "name": "author",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User ID",
-                        "name": "user_id",
                         "in": "body",
                         "required": true,
                         "schema": {

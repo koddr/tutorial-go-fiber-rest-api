@@ -88,12 +88,6 @@ paths:
         required: true
         schema:
           type: string
-      - description: User ID
-        in: body
-        name: user_id
-        required: true
-        schema:
-          type: string
       - description: Book attributes
         in: body
         name: book_attrs
@@ -135,12 +129,6 @@ paths:
         required: true
         schema:
           type: string
-      - description: User ID
-        in: body
-        name: user_id
-        required: true
-        schema:
-          type: string
       - description: Book status
         in: body
         name: book_status
@@ -156,7 +144,7 @@ paths:
       produces:
       - application/json
       responses:
-        "202":
+        "201":
           description: ok
           schema:
             type: string

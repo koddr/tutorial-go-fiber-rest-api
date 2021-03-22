@@ -10,46 +10,6 @@ import (
 	"github.com/koddr/tutorial-go-fiber-rest-api/platform/database"
 )
 
-// GetBooks func gets all exists books.
-// @Description Get all exists books.
-// @Summary get all exists books
-// @Tags Books
-// @Accept json
-// @Produce json
-// @Success 200 {array} models.Book
-// @Router /v1/books [get]
-func GetBooks(c *fiber.Ctx) error {
-	// Create database connection.
-	db, err := database.OpenDBConnection()
-	if err != nil {
-		// Return status 500 and database connection error.
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
-	}
-
-	// Get all books.
-	books, err := db.GetBooks()
-	if err != nil {
-		// Return, if books not found.
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": true,
-			"msg":   "books were not found",
-			"count": 0,
-			"books": nil,
-		})
-	}
-
-	// Return status 200 OK.
-	return c.JSON(fiber.Map{
-		"error": false,
-		"msg":   nil,
-		"count": len(books),
-		"books": books,
-	})
-}
-
 // GetBook func gets book by given ID or 404 error.
 // @Description Get book by given ID.
 // @Summary get book by given ID
@@ -106,7 +66,6 @@ func GetBook(c *fiber.Ctx) error {
 // @Produce json
 // @Param title body string true "Title"
 // @Param author body string true "Author"
-// @Param user_id body string true "User ID"
 // @Param book_attrs body models.BookAttrs true "Book attributes"
 // @Success 200 {object} models.Book
 // @Security ApiKeyAuth
@@ -202,10 +161,9 @@ func CreateBook(c *fiber.Ctx) error {
 // @Param id body string true "Book ID"
 // @Param title body string true "Title"
 // @Param author body string true "Author"
-// @Param user_id body string true "User ID"
 // @Param book_status body integer true "Book status"
 // @Param book_attrs body models.BookAttrs true "Book attributes"
-// @Success 202 {string} status "ok"
+// @Success 201 {string} status "ok"
 // @Security ApiKeyAuth
 // @Router /v1/book [put]
 func UpdateBook(c *fiber.Ctx) error {
@@ -291,10 +249,7 @@ func UpdateBook(c *fiber.Ctx) error {
 	}
 
 	// Return status 201.
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"error": false,
-		"msg":   nil,
-	})
+	return c.SendStatus(fiber.StatusCreated)
 }
 
 // DeleteBook func for deletes book by given ID.
@@ -348,7 +303,7 @@ func DeleteBook(c *fiber.Ctx) error {
 	// Create a new validator for a Book model.
 	validate := utils.NewValidator()
 
-	// Validate book fields.
+	// Validate only one book field ID.
 	if err := validate.StructPartial(book, "id"); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
