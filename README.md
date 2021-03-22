@@ -2,6 +2,8 @@
 
 Fiber, PostgreSQL, JWT and Swagger docs in isolated Docker containers.
 
+The full article is published on **March 22, 2021**, on Dev.to: https://dev.to/koddr/build-a-restful-api-on-go-fiber-postgresql-jwt-and-swagger-docs-in-isolated-docker-containers-475j
+
 ## Quick start
 
 1. Rename `.env.example` to `.env` and fill it with your environment values.
