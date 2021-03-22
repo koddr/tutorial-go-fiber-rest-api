@@ -1,23 +1,26 @@
 # 📖 Tutorial: Build a RESTful API on Go
 
-Fiber, PostgreSQL, JWT auth and automatically generated Swagger docs in isolated Docker containers.
+Fiber, PostgreSQL, JWT and Swagger docs in isolated Docker containers.
+
+## Quick start
 
 1. Rename `.env.example` to `.env` and fill it with your environment values.
-2. Run project by this command:
+2. Install [Docker](https://www.docker.com/get-started) and [migrate](https://github.com/golang-migrate/migrate) tool for applying migrations.
+3. Run project by this command:
 
 ```bash
 make docker.run
 
 # Process:
-#   - Generate API docs
-#   - Create a new Docker network
-#   - Build and run Docker containers (Fiber, Redis, PostgreSQL)
-#   - Apply database migrations (by github.com/golang-migrate/migrate)
+#   - Generate API docs by Swagger
+#   - Create a new Docker network for containers
+#   - Build and run Docker containers (Fiber, PostgreSQL)
+#   - Apply database migrations (using github.com/golang-migrate/migrate)
 ```
 
-3. Go to API Docs page (Swagger): [localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html)
+4. Go to API Docs page (Swagger): [localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html)
 
-![Screenshot](https://user-images.githubusercontent.com/11155743/111316852-ace5c600-8674-11eb-8936-e1d88c58a6fa.png)
+![Screenshot](https://user-images.githubusercontent.com/11155743/111972767-dd16e400-8b0e-11eb-8ba1-98c648f56a5a.png)
 
 ## ⚠️ License
 

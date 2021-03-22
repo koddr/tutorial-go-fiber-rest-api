@@ -12,16 +12,13 @@ security:
 	gosec -quiet ./...
 
 test: security
-	go test -cover ./...
-
-test.db:
 	go test -v -timeout 30s -coverprofile=cover.out -cover ./...
 	go tool cover -func=cover.out
 
 build: clean test
 	CGO_ENABLED=0 go build -ldflags="-w -s" -o $(BUILD_DIR)/$(APP_NAME) main.go
 
-run: swag.init build
+run: swag build
 	$(BUILD_DIR)/$(APP_NAME)
 
 migrate.up:
@@ -33,7 +30,7 @@ migrate.down:
 migrate.force:
 	migrate -path $(MIGRATIONS_FOLDER) -database "$(DATABASE_URL)" force $(version)
 
-docker.run: docker.network docker.postgres swag.init docker.fiber docker.redis migrate.up
+docker.run: docker.network docker.postgres swag docker.fiber migrate.up
 
 docker.network:
 	docker network inspect dev-network >/dev/null 2>&1 || \
@@ -60,14 +57,7 @@ docker.postgres:
 		-p 5432:5432 \
 		postgres
 
-docker.redis:
-	docker run --rm -d \
-		--name dev-redis \
-		--network dev-network \
-		-p 6379:6379 \
-		redis
-
-docker.stop: docker.stop.fiber docker.stop.postgres docker.stop.redis
+docker.stop: docker.stop.fiber docker.stop.postgres
 
 docker.stop.fiber:
 	docker stop dev-fiber
@@ -75,8 +65,5 @@ docker.stop.fiber:
 docker.stop.postgres:
 	docker stop dev-postgres
 
-docker.stop.redis:
-	docker stop dev-redis
-
-swag.init:
+swag:
 	swag init
