@@ -2,7 +2,7 @@
 
 Fiber, PostgreSQL, JWT and Swagger docs in isolated Docker containers.
 
-The full article is published on **March 22, 2021**, on Dev.to: https://dev.to/koddr/build-a-restful-api-on-go-fiber-postgresql-jwt-and-swagger-docs-in-isolated-docker-containers-475j
+👉 The full article is published on **March 22, 2021**, on Dev.to: https://dev.to/koddr/build-a-restful-api-on-go-fiber-postgresql-jwt-and-swagger-docs-in-isolated-docker-containers-475j
 
 ![fiber_cover_gh](https://user-images.githubusercontent.com/11155743/112001218-cf258b00-8b2f-11eb-9c6d-d6c38a09af86.jpg)
 
