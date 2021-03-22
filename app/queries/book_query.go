@@ -30,25 +30,6 @@ func (q *BookQueries) GetBooks() ([]models.Book, error) {
 	return books, nil
 }
 
-// GetBooksByAuthor method for getting all books by given author.
-func (q *BookQueries) GetBooksByAuthor(author string) ([]models.Book, error) {
-	// Define books variable.
-	books := []models.Book{}
-
-	// Define query string.
-	query := `SELECT * FROM books WHERE author = $1`
-
-	// Send query to database.
-	err := q.Get(&books, query, author)
-	if err != nil {
-		// Return empty object and error.
-		return books, err
-	}
-
-	// Return query result.
-	return books, nil
-}
-
 // GetBook method for getting one book by given ID.
 func (q *BookQueries) GetBook(id uuid.UUID) (models.Book, error) {
 	// Define book variable.
