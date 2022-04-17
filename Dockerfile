@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine AS builder
+FROM golang:1.18-alpine AS builder
 
 # Move to working directory (/build).
 WORKDIR /build

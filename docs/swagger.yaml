@@ -3,6 +3,7 @@ definitions:
   models.Book:
     properties:
       author:
+        maxLength: 255
         type: string
       book_attrs:
         $ref: '#/definitions/models.BookAttrs'
@@ -13,6 +14,7 @@ definitions:
       id:
         type: string
       title:
+        maxLength: 255
         type: string
       updated_at:
         type: string
@@ -33,6 +35,8 @@ definitions:
       picture:
         type: string
       rating:
+        maximum: 10
+        minimum: 1
         type: integer
     type: object
 info:
