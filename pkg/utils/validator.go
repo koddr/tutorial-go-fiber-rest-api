@@ -14,9 +14,9 @@ func NewValidator() *validator.Validate {
 	_ = validate.RegisterValidation("uuid", func(fl validator.FieldLevel) bool {
 		field := fl.Field().String()
 		if _, err := uuid.Parse(field); err != nil {
-			return true
+			return false  // if there is an error, validation should return false
 		}
-		return false
+		return true  // if no error, validation should return true 
 	})
 
 	return validate
