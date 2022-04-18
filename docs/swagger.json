@@ -278,7 +278,8 @@
             ],
             "properties": {
                 "author": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "book_attrs": {
                     "$ref": "#/definitions/models.BookAttrs"
@@ -293,7 +294,8 @@
                     "type": "string"
                 },
                 "title": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "updated_at": {
                     "type": "string"
@@ -313,7 +315,9 @@
                     "type": "string"
                 },
                 "rating": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 1
                 }
             }
         }
