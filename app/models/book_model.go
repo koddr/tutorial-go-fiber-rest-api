@@ -30,7 +30,7 @@ type BookAttrs struct {
 
 // Value make the BookAttrs struct implement the driver.Valuer interface.
 // This method simply returns the JSON-encoded representation of the struct.
-func (b BookAttrs) Value() (driver.Value, error) {
+func (b *BookAttrs) Value() (driver.Value, error) {
 	return json.Marshal(b)
 }
 
