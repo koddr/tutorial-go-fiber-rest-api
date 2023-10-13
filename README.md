@@ -37,3 +37,15 @@ And, of course, you can support me by donating at [LiberaPay](https://liberapay.
 ## ⚠️ License
 
 MIT &copy; [Vic Shóstak](https://github.com/koddr) & [True web artisans](https://1wa.co/).
+
+
+## Building:
+
+https://levelup.gitconnected.com/a-better-way-than-ldflags-to-add-a-build-version-to-your-go-binaries-2258ce419d2d
+
+
+
+Windows:
+```
+$ set CGO_ENABLED=0 && go build -ldflags="-w -s -X 'main.version=1.0.1'" .
+```
