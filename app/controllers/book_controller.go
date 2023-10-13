@@ -127,7 +127,7 @@ func CreateBook(c *fiber.Ctx) error {
 	// Set expiration time from JWT data of current book.
 	expires := claims.Expires
 
-	// Checking, if now time greather than expiration from JWT.
+	// Checking, if now time greater than expiration from JWT.
 	if now > expires {
 		// Return status 401 and unauthorized error message.
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -223,7 +223,7 @@ func UpdateBook(c *fiber.Ctx) error {
 	// Set expiration time from JWT data of current book.
 	expires := claims.Expires
 
-	// Checking, if now time greather than expiration from JWT.
+	// Checking, if now time greater than expiration from JWT.
 	if now > expires {
 		// Return status 401 and unauthorized error message.
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -254,7 +254,7 @@ func UpdateBook(c *fiber.Ctx) error {
 		})
 	}
 
-	// Checking, if book with given ID is exists.
+	// Checking, if book with given ID does exist.
 	foundedBook, err := db.GetBook(book.ID)
 	if err != nil {
 		// Return status 404 and book not found error.
@@ -319,7 +319,7 @@ func DeleteBook(c *fiber.Ctx) error {
 	// Set expiration time from JWT data of current book.
 	expires := claims.Expires
 
-	// Checking, if now time greather than expiration from JWT.
+	// Checking, if now time greater than expiration from JWT.
 	if now > expires {
 		// Return status 401 and unauthorized error message.
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -362,7 +362,7 @@ func DeleteBook(c *fiber.Ctx) error {
 		})
 	}
 
-	// Checking, if book with given ID is exists.
+	// Checking, if book with given ID does exist.
 	foundedBook, err := db.GetBook(book.ID)
 	if err != nil {
 		// Return status 404 and book not found error.
